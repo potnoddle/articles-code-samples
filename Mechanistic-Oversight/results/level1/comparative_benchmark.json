@@ -1,0 +1,45 @@
+{
+  "tier": "Tier 1 (Tier 1: Micro-Scale Logic Harness)",
+  "hardware": "Intel Multi-Core CPU / Consumer Benchmark",
+  "timestamp_utc": "2026-09-11T19:44:47Z",
+  "recurrent_model": {
+    "type": "TinyRecursiveModel (TRM)",
+    "physical_parameters": 764928,
+    "trainable_parameters": 764928,
+    "physical_layers": 2,
+    "recurrent_loops": 4,
+    "effective_virtual_depth": 24,
+    "train_time_seconds": 45.0,
+    "inference_latency_ms": 12.29,
+    "tokens_per_sec": 1546.0,
+    "candidate_probabilities_pct": {
+      "Duncan": 6.574489921331406,
+      "Banquo": 2.2380653768777847,
+      "Macduff": 31.588295102119446
+    },
+    "deliberation_slices_captured": 4
+  },
+  "non_recurrent_baseline": {
+    "type": "StaticFeedforwardTransformer",
+    "physical_parameters": 706560,
+    "trainable_parameters": 706560,
+    "physical_layers": 2,
+    "recurrent_loops": 1,
+    "effective_virtual_depth": 2,
+    "train_time_seconds": 56.4,
+    "inference_latency_ms": 1.06,
+    "tokens_per_sec": 17840.9,
+    "candidate_probabilities_pct": {
+      "Duncan": 3.7525586783885956,
+      "Banquo": 3.4086138010025024,
+      "Macduff": 3.9554908871650696
+    },
+    "deliberation_slices_captured": 2
+  },
+  "comparative_ratios": {
+    "parameter_ratio": 1.08,
+    "effective_depth_multiplier": 12.0,
+    "train_time_ratio": 0.8,
+    "inference_compute_tax": 11.54
+  }
+}

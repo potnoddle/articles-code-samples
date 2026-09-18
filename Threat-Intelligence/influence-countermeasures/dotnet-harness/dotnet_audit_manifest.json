@@ -1,0 +1,16 @@
+{
+  "runtime": ".NET 6.0 (C#)",
+  "benchmark": "SPEC-COUNTER-INFLUENCE-02",
+  "timestamp": "2026-09-16T18:23:08.8356382Z",
+  "status": "PASSED",
+  "mitigated_threats": [
+    "GTG-84005 (Malaysia Election Evasion)",
+    "GTG-04001 (Wagner CAR FIMI)",
+    "GTG-24015 (State-Media Sub-Editors)"
+  ],
+  "security_invariants": {
+    "multi_turn_vector_tracking": true,
+    "c2pa_provenance_binding": true,
+    "evasion_penalty_multiplier": 0.35
+  }
+}

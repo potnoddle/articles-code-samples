@@ -1,0 +1,8 @@
+name = "edge-capability-validator"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+CAPABILITY_SECRET = "master-capability-signing-secret-2026"
+ENABLE_HONEY_ROUTING = "true"
+# ORIGIN_URL = "https://internal-api.enterprise.corp"

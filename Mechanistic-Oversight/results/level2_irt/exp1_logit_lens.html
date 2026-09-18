@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astra Mechanistic Oversight: Interactive Logit Lens Grid</title>
+  <style>
+    :root {
+      --bg: #0a0a14;
+      --card-bg: rgba(20, 20, 38, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --cyan: #00f5ff;
+      --purple: #a855f7;
+      --pink: #ff4d6d;
+      --green: #50fa7b;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .header {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00f5ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+    .matrix-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--cyan);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .loop-header {
+      color: var(--purple);
+      font-weight: 700;
+      background: rgba(168, 85, 247, 0.08);
+      text-align: left;
+      padding-left: 12px;
+      white-space: nowrap;
+    }
+    .cell {
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+      border-color: var(--cyan);
+    }
+    .cell-word {
+      font-weight: 700;
+      display: block;
+    }
+    .cell-prob {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141426;
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      z-index: 100;
+      min-width: 260px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Interactive Logit Lens Matrix</h1>
+  <p>Unembedding intermediate recurrent hidden states directly to vocabulary space across time and depth</p>
+</div>
+
+<div class="matrix-wrapper">
+  <table id="lens-table">
+    <thead>
+      <tr id="token-row">
+        <th style="width: 100px;">Loop / Pos</th>
+      </tr>
+    </thead>
+    <tbody id="lens-body"></tbody>
+  </table>
+</div>
+
+<div class="modal" id="info-modal">
+  <h4 id="modal-title" style="color: var(--cyan); margin-bottom: 8px; font-size: 13px;"></h4>
+  <div id="modal-top3"></div>
+</div>
+
+<script>
+  const payload = {"tokens": ["duncan", "bears", "a", "dagger", ".", "he", "gives", "it", "to", "banquo", ".", "banquo", "drops", "it", ".", "macduff", "takes", "it", "."], "loops": ["Loop 1", "Loop 2", "Loop 3", "Loop 4", "Loop 5", "Loop 6"], "grid": [[{"word": "has", "prob": 7.2, "top3": [{"word": "has", "prob": 7.2}, {"word": ".", "prob": 6.1}, {"word": "carries", "prob": 5.7}]}, {"word": "it", "prob": 34.2, "top3": [{"word": "it", "prob": 34.2}, {"word": "a", "prob": 11.0}, {"word": "the", "prob": 9.3}]}, {"word": "dagger", "prob": 10.0, "top3": [{"word": "dagger", "prob": 10.0}, {"word": "sword", "prob": 3.5}, {"word": "conflict", "prob": 2.4}]}, {"word": ".", "prob": 18.4, "top3": [{"word": ".", "prob": 18.4}, {"word": "has", "prob": 7.7}, {"word": "carries", "prob": 3.7}]}, {"word": "<EOS>", "prob": 31.8, "top3": [{"word": "<EOS>", "prob": 31.8}, {"word": "he", "prob": 7.0}, {"word": "it", "prob": 5.7}]}, {"word": "lends", "prob": 7.0, "top3": [{"word": "lends", "prob": 7.0}, {"word": "has", "prob": 4.7}, {"word": "gives", "prob": 4.5}]}, {"word": "it", "prob": 35.4, "top3": [{"word": "it", "prob": 35.4}, {"word": "to", "prob": 9.0}, {"word": "has", "prob": 4.5}]}, {"word": ".", "prob": 13.4, "top3": [{"word": ".", "prob": 13.4}, {"word": "<BOS>", "prob": 7.4}, {"word": "to", "prob": 7.0}]}, {"word": "it", "prob": 12.1, "top3": [{"word": "it", "prob": 12.1}, {"word": "the", "prob": 7.1}, {"word": "duncan", "prob": 6.4}]}, {"word": "has", "prob": 9.7, "top3": [{"word": "has", "prob": 9.7}, {"word": "carries", "prob": 6.3}, {"word": ".", "prob": 5.2}]}, {"word": "<EOS>", "prob": 43.9, "top3": [{"word": "<EOS>", "prob": 43.9}, {"word": "he", "prob": 6.3}, {"word": "it", "prob": 5.6}]}, {"word": "has", "prob": 10.2, "top3": [{"word": "has", "prob": 10.2}, {"word": ".", "prob": 7.3}, {"word": "carries", "prob": 6.5}]}, {"word": "it", "prob": 25.3, "top3": [{"word": "it", "prob": 25.3}, {"word": "has", "prob": 3.7}, {"word": "leads", "prob": 2.5}]}, {"word": ".", "prob": 13.2, "top3": [{"word": ".", "prob": 13.2}, {"word": "to", "prob": 4.0}, {"word": "has", "prob": 3.5}]}, {"word": "<EOS>", "prob": 42.2, "top3": [{"word": "<EOS>", "prob": 42.2}, {"word": "he", "prob": 6.0}, {"word": "it", "prob": 4.9}]}, {"word": "has", "prob": 15.2, "top3": [{"word": "has", "prob": 15.2}, {"word": "is", "prob": 8.1}, {"word": "for", "prob": 4.7}]}, {"word": "it", "prob": 29.5, "top3": [{"word": "it", "prob": 29.5}, {"word": "to", "prob": 10.6}, {"word": ".", "prob": 6.3}]}, {"word": ".", "prob": 10.8, "top3": [{"word": ".", "prob": 10.8}, {"word": "<BOS>", "prob": 5.2}, {"word": "to", "prob": 5.1}]}, {"word": "<EOS>", "prob": 43.7, "top3": [{"word": "<EOS>", "prob": 43.7}, {"word": "he", "prob": 5.9}, {"word": "it", "prob": 4.2}]}], [{"word": "carries", "prob": 10.6, "top3": [{"word": "carries", "prob": 10.6}, {"word": ".", "prob": 10.1}, {"word": "has", "prob": 7.3}]}, {"word": "it", "prob": 33.0, "top3": [{"word": "it", "prob": 33.0}, {"word": "a", "prob": 20.0}, {"word": "the", "prob": 16.1}]}, {"word": "dagger", "prob": 11.6, "top3": [{"word": "dagger", "prob": 11.6}, {"word": "sword", "prob": 4.2}, {"word": "duncan", "prob": 3.4}]}, {"word": ".", "prob": 31.3, "top3": [{"word": ".", "prob": 31.3}, {"word": "carries", "prob": 6.9}, {"word": "has", "prob": 6.3}]}, {"word": "<EOS>", "prob": 21.5, "top3": [{"word": "<EOS>", "prob": 21.5}, {"word": "he", "prob": 14.0}, {"word": "a", "prob": 7.5}]}, {"word": "lends", "prob": 8.6, "top3": [{"word": "lends", "prob": 8.6}, {"word": "gives", "prob": 5.6}, {"word": "passes", "prob": 4.0}]}, {"word": "it", "prob": 59.9, "top3": [{"word": "it", "prob": 59.9}, {"word": "to", "prob": 7.7}, {"word": "a", "prob": 2.8}]}, {"word": ".", "prob": 60.5, "top3": [{"word": ".", "prob": 60.5}, {"word": "to", "prob": 6.3}, {"word": "places", "prob": 1.5}]}, {"word": "it", "prob": 11.0, "top3": [{"word": "it", "prob": 11.0}, {"word": "duncan", "prob": 10.1}, {"word": "banquo", "prob": 9.4}]}, {"word": "carries", "prob": 9.9, "top3": [{"word": "carries", "prob": 9.9}, {"word": "has", "prob": 7.7}, {"word": "loses", "prob": 5.3}]}, {"word": "<EOS>", "prob": 32.9, "top3": [{"word": "<EOS>", "prob": 32.9}, {"word": "he", "prob": 13.1}, {"word": "the", "prob": 7.2}]}, {"word": "carries", "prob": 11.0, "top3": [{"word": "carries", "prob": 11.0}, {"word": ".", "prob": 8.6}, {"word": "has", "prob": 8.4}]}, {"word": "it", "prob": 54.3, "top3": [{"word": "it", "prob": 54.3}, {"word": "a", "prob": 1.9}, {"word": "leads", "prob": 1.5}]}, {"word": ".", "prob": 59.9, "top3": [{"word": ".", "prob": 59.9}, {"word": "to", "prob": 3.9}, {"word": "has", "prob": 2.2}]}, {"word": "<EOS>", "prob": 36.0, "top3": [{"word": "<EOS>", "prob": 36.0}, {"word": "he", "prob": 12.5}, {"word": "a", "prob": 6.6}]}, {"word": "has", "prob": 12.0, "top3": [{"word": "has", "prob": 12.0}, {"word": "is", "prob": 7.5}, {"word": "it", "prob": 5.5}]}, {"word": "it", "prob": 58.1, "top3": [{"word": "it", "prob": 58.1}, {"word": "to", "prob": 10.3}, {"word": "a", "prob": 1.8}]}, {"word": ".", "prob": 53.9, "top3": [{"word": ".", "prob": 53.9}, {"word": "to", "prob": 6.1}, {"word": "places", "prob": 2.1}]}, {"word": "<EOS>", "prob": 33.0, "top3": [{"word": "<EOS>", "prob": 33.0}, {"word": "he", "prob": 11.6}, {"word": "the", "prob": 8.4}]}], [{"word": "carries", "prob": 12.4, "top3": [{"word": "carries", "prob": 12.4}, {"word": ".", "prob": 10.1}, {"word": "loses", "prob": 7.3}]}, {"word": "it", "prob": 29.1, "top3": [{"word": "it", "prob": 29.1}, {"word": "a", "prob": 23.8}, {"word": "the", "prob": 18.7}]}, {"word": "dagger", "prob": 11.2, "top3": [{"word": "dagger", "prob": 11.2}, {"word": "duncan", "prob": 3.7}, {"word": "sword", "prob": 3.6}]}, {"word": ".", "prob": 30.4, "top3": [{"word": ".", "prob": 30.4}, {"word": "carries", "prob": 8.9}, {"word": "loses", "prob": 5.3}]}, {"word": "he", "prob": 16.1, "top3": [{"word": "he", "prob": 16.1}, {"word": "<EOS>", "prob": 14.2}, {"word": "a", "prob": 8.5}]}, {"word": "lends", "prob": 8.7, "top3": [{"word": "lends", "prob": 8.7}, {"word": "gives", "prob": 5.4}, {"word": "passes", "prob": 4.4}]}, {"word": "it", "prob": 67.5, "top3": [{"word": "it", "prob": 67.5}, {"word": "to", "prob": 6.1}, {"word": "a", "prob": 2.3}]}, {"word": ".", "prob": 76.4, "top3": [{"word": ".", "prob": 76.4}, {"word": "to", "prob": 3.4}, {"word": "carries", "prob": 1.3}]}, {"word": "duncan", "prob": 11.5, "top3": [{"word": "duncan", "prob": 11.5}, {"word": "banquo", "prob": 10.7}, {"word": "it", "prob": 10.0}]}, {"word": "carries", "prob": 11.0, "top3": [{"word": "carries", "prob": 11.0}, {"word": "has", "prob": 6.3}, {"word": "loses", "prob": 6.0}]}, {"word": "<EOS>", "prob": 23.2, "top3": [{"word": "<EOS>", "prob": 23.2}, {"word": "he", "prob": 16.0}, {"word": "the", "prob": 8.7}]}, {"word": "carries", "prob": 12.5, "top3": [{"word": "carries", "prob": 12.5}, {"word": "loses", "prob": 8.3}, {"word": ".", "prob": 8.2}]}, {"word": "it", "prob": 65.4, "top3": [{"word": "it", "prob": 65.4}, {"word": "a", "prob": 2.1}, {"word": "me", "prob": 1.1}]}, {"word": ".", "prob": 74.5, "top3": [{"word": ".", "prob": 74.5}, {"word": "to", "prob": 2.3}, {"word": ",", "prob": 1.5}]}, {"word": "<EOS>", "prob": 26.8, "top3": [{"word": "<EOS>", "prob": 26.8}, {"word": "he", "prob": 15.5}, {"word": "a", "prob": 8.4}]}, {"word": "has", "prob": 9.6, "top3": [{"word": "has", "prob": 9.6}, {"word": "it", "prob": 6.6}, {"word": "carries", "prob": 5.1}]}, {"word": "it", "prob": 67.1, "top3": [{"word": "it", "prob": 67.1}, {"word": "to", "prob": 8.2}, {"word": "a", "prob": 1.5}]}, {"word": ".", "prob": 71.8, "top3": [{"word": ".", "prob": 71.8}, {"word": "to", "prob": 3.6}, {"word": "carries", "prob": 1.6}]}, {"word": "<EOS>", "prob": 24.2, "top3": [{"word": "<EOS>", "prob": 24.2}, {"word": "he", "prob": 13.8}, {"word": "the", "prob": 9.4}]}], [{"word": "carries", "prob": 13.1, "top3": [{"word": "carries", "prob": 13.1}, {"word": ".", "prob": 9.7}, {"word": "loses", "prob": 7.7}]}, {"word": "it", "prob": 26.1, "top3": [{"word": "it", "prob": 26.1}, {"word": "a", "prob": 26.0}, {"word": "the", "prob": 19.8}]}, {"word": "dagger", "prob": 10.3, "top3": [{"word": "dagger", "prob": 10.3}, {"word": "duncan", "prob": 3.9}, {"word": "banquo", "prob": 3.7}]}, {"word": ".", "prob": 26.8, "top3": [{"word": ".", "prob": 26.8}, {"word": "carries", "prob": 10.3}, {"word": "loses", "prob": 6.3}]}, {"word": "he", "prob": 16.3, "top3": [{"word": "he", "prob": 16.3}, {"word": "<EOS>", "prob": 10.4}, {"word": "banquo", "prob": 8.7}]}, {"word": "lends", "prob": 8.5, "top3": [{"word": "lends", "prob": 8.5}, {"word": "gives", "prob": 5.0}, {"word": "passes", "prob": 4.5}]}, {"word": "it", "prob": 70.1, "top3": [{"word": "it", "prob": 70.1}, {"word": "to", "prob": 5.2}, {"word": "a", "prob": 2.0}]}, {"word": ".", "prob": 81.1, "top3": [{"word": ".", "prob": 81.1}, {"word": "to", "prob": 2.2}, {"word": "carries", "prob": 1.4}]}, {"word": "duncan", "prob": 12.2, "top3": [{"word": "duncan", "prob": 12.2}, {"word": "banquo", "prob": 11.1}, {"word": "it", "prob": 9.6}]}, {"word": "carries", "prob": 11.3, "top3": [{"word": "carries", "prob": 11.3}, {"word": "loses", "prob": 6.3}, {"word": "has", "prob": 5.5}]}, {"word": "<EOS>", "prob": 17.6, "top3": [{"word": "<EOS>", "prob": 17.6}, {"word": "he", "prob": 17.0}, {"word": "the", "prob": 8.7}]}, {"word": "carries", "prob": 12.8, "top3": [{"word": "carries", "prob": 12.8}, {"word": "loses", "prob": 8.5}, {"word": ".", "prob": 7.7}]}, {"word": "it", "prob": 70.3, "top3": [{"word": "it", "prob": 70.3}, {"word": "a", "prob": 2.3}, {"word": "me", "prob": 0.8}]}, {"word": ".", "prob": 78.8, "top3": [{"word": ".", "prob": 78.8}, {"word": "to", "prob": 1.6}, {"word": "carries", "prob": 1.4}]}, {"word": "<EOS>", "prob": 20.7, "top3": [{"word": "<EOS>", "prob": 20.7}, {"word": "he", "prob": 16.6}, {"word": "a", "prob": 9.0}]}, {"word": "has", "prob": 8.1, "top3": [{"word": "has", "prob": 8.1}, {"word": "it", "prob": 7.2}, {"word": "carries", "prob": 5.2}]}, {"word": "it", "prob": 70.1, "top3": [{"word": "it", "prob": 70.1}, {"word": "to", "prob": 7.0}, {"word": "a", "prob": 1.3}]}, {"word": ".", "prob": 77.5, "top3": [{"word": ".", "prob": 77.5}, {"word": "to", "prob": 2.4}, {"word": "carries", "prob": 1.6}]}, {"word": "<EOS>", "prob": 18.8, "top3": [{"word": "<EOS>", "prob": 18.8}, {"word": "he", "prob": 14.5}, {"word": "the", "prob": 9.0}]}], [{"word": "carries", "prob": 13.2, "top3": [{"word": "carries", "prob": 13.2}, {"word": ".", "prob": 9.3}, {"word": "loses", "prob": 7.8}]}, {"word": "a", "prob": 27.5, "top3": [{"word": "a", "prob": 27.5}, {"word": "it", "prob": 23.9}, {"word": "the", "prob": 20.1}]}, {"word": "dagger", "prob": 9.4, "top3": [{"word": "dagger", "prob": 9.4}, {"word": "duncan", "prob": 4.1}, {"word": "banquo", "prob": 3.8}]}, {"word": ".", "prob": 23.6, "top3": [{"word": ".", "prob": 23.6}, {"word": "carries", "prob": 11.0}, {"word": "loses", "prob": 6.9}]}, {"word": "he", "prob": 15.9, "top3": [{"word": "he", "prob": 15.9}, {"word": "banquo", "prob": 9.4}, {"word": "duncan", "prob": 9.3}]}, {"word": "lends", "prob": 8.3, "top3": [{"word": "lends", "prob": 8.3}, {"word": "gives", "prob": 4.7}, {"word": "passes", "prob": 4.5}]}, {"word": "it", "prob": 70.8, "top3": [{"word": "it", "prob": 70.8}, {"word": "to", "prob": 4.6}, {"word": "a", "prob": 1.9}]}, {"word": ".", "prob": 82.4, "top3": [{"word": ".", "prob": 82.4}, {"word": "to", "prob": 1.7}, {"word": "carries", "prob": 1.5}]}, {"word": "duncan", "prob": 12.4, "top3": [{"word": "duncan", "prob": 12.4}, {"word": "banquo", "prob": 11.2}, {"word": "it", "prob": 9.6}]}, {"word": "carries", "prob": 11.2, "top3": [{"word": "carries", "prob": 11.2}, {"word": "loses", "prob": 6.6}, {"word": "lends", "prob": 5.1}]}, {"word": "he", "prob": 17.1, "top3": [{"word": "he", "prob": 17.1}, {"word": "<EOS>", "prob": 14.1}, {"word": "the", "prob": 8.3}]}, {"word": "carries", "prob": 12.8, "top3": [{"word": "carries", "prob": 12.8}, {"word": "loses", "prob": 8.5}, {"word": ".", "prob": 7.4}]}, {"word": "it", "prob": 72.7, "top3": [{"word": "it", "prob": 72.7}, {"word": "a", "prob": 2.4}, {"word": "he", "prob": 0.8}]}, {"word": ".", "prob": 80.2, "top3": [{"word": ".", "prob": 80.2}, {"word": "carries", "prob": 1.5}, {"word": "to", "prob": 1.2}]}, {"word": "he", "prob": 16.8, "top3": [{"word": "he", "prob": 16.8}, {"word": "<EOS>", "prob": 16.7}, {"word": "a", "prob": 9.2}]}, {"word": "it", "prob": 7.3, "top3": [{"word": "it", "prob": 7.3}, {"word": "has", "prob": 7.1}, {"word": "carries", "prob": 5.2}]}, {"word": "it", "prob": 70.8, "top3": [{"word": "it", "prob": 70.8}, {"word": "to", "prob": 6.3}, {"word": "a", "prob": 1.2}]}, {"word": ".", "prob": 79.5, "top3": [{"word": ".", "prob": 79.5}, {"word": "to", "prob": 1.8}, {"word": "carries", "prob": 1.7}]}, {"word": "<EOS>", "prob": 15.4, "top3": [{"word": "<EOS>", "prob": 15.4}, {"word": "he", "prob": 14.4}, {"word": "macduff", "prob": 9.8}]}], [{"word": "carries", "prob": 13.1, "top3": [{"word": "carries", "prob": 13.1}, {"word": ".", "prob": 9.0}, {"word": "loses", "prob": 7.9}]}, {"word": "a", "prob": 28.5, "top3": [{"word": "a", "prob": 28.5}, {"word": "it", "prob": 22.2}, {"word": "the", "prob": 20.1}]}, {"word": "dagger", "prob": 8.5, "top3": [{"word": "dagger", "prob": 8.5}, {"word": "duncan", "prob": 4.2}, {"word": "banquo", "prob": 3.9}]}, {"word": ".", "prob": 21.1, "top3": [{"word": ".", "prob": 21.1}, {"word": "carries", "prob": 11.3}, {"word": "loses", "prob": 7.3}]}, {"word": "he", "prob": 15.3, "top3": [{"word": "he", "prob": 15.3}, {"word": "banquo", "prob": 9.8}, {"word": "duncan", "prob": 9.7}]}, {"word": "lends", "prob": 8.0, "top3": [{"word": "lends", "prob": 8.0}, {"word": "passes", "prob": 4.5}, {"word": "gives", "prob": 4.3}]}, {"word": "it", "prob": 70.5, "top3": [{"word": "it", "prob": 70.5}, {"word": "to", "prob": 4.3}, {"word": "a", "prob": 1.8}]}, {"word": ".", "prob": 82.6, "top3": [{"word": ".", "prob": 82.6}, {"word": "carries", "prob": 1.6}, {"word": "to", "prob": 1.4}]}, {"word": "duncan", "prob": 12.5, "top3": [{"word": "duncan", "prob": 12.5}, {"word": "banquo", "prob": 11.2}, {"word": "it", "prob": 9.6}]}, {"word": "carries", "prob": 11.1, "top3": [{"word": "carries", "prob": 11.1}, {"word": "loses", "prob": 6.7}, {"word": "lends", "prob": 4.9}]}, {"word": "he", "prob": 16.7, "top3": [{"word": "he", "prob": 16.7}, {"word": "<EOS>", "prob": 11.8}, {"word": "macduff", "prob": 7.9}]}, {"word": "carries", "prob": 12.6, "top3": [{"word": "carries", "prob": 12.6}, {"word": "loses", "prob": 8.5}, {"word": ".", "prob": 7.2}]}, {"word": "it", "prob": 73.8, "top3": [{"word": "it", "prob": 73.8}, {"word": "a", "prob": 2.6}, {"word": "he", "prob": 0.8}]}, {"word": ".", "prob": 80.4, "top3": [{"word": ".", "prob": 80.4}, {"word": "carries", "prob": 1.6}, {"word": "loses", "prob": 1.1}]}, {"word": "he", "prob": 16.6, "top3": [{"word": "he", "prob": 16.6}, {"word": "<EOS>", "prob": 14.0}, {"word": "a", "prob": 9.1}]}, {"word": "it", "prob": 7.4, "top3": [{"word": "it", "prob": 7.4}, {"word": "has", "prob": 6.4}, {"word": "carries", "prob": 5.2}]}, {"word": "it", "prob": 70.6, "top3": [{"word": "it", "prob": 70.6}, {"word": "to", "prob": 5.9}, {"word": "a", "prob": 1.2}]}, {"word": ".", "prob": 80.0, "top3": [{"word": ".", "prob": 80.0}, {"word": "carries", "prob": 1.8}, {"word": "to", "prob": 1.5}]}, {"word": "he", "prob": 14.1, "top3": [{"word": "he", "prob": 14.1}, {"word": "<EOS>", "prob": 13.1}, {"word": "macduff", "prob": 10.7}]}]]};
+
+  const tokenRow = document.getElementById('token-row');
+  payload.tokens.forEach((tok, i) => {
+    const th = document.createElement('th');
+    th.innerHTML = `<span style="color: var(--text-dim); font-size: 10px;">${i}</span><br>${tok}`;
+    tokenRow.appendChild(th);
+  });
+
+  const tbody = document.getElementById('lens-body');
+  payload.loops.forEach((loopName, lIdx) => {
+    const tr = document.createElement('tr');
+    const loopTh = document.createElement('td');
+    loopTh.className = 'loop-header';
+    loopTh.innerText = loopName;
+    tr.appendChild(loopTh);
+
+    payload.grid[lIdx].forEach((cell, pos) => {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      
+      const alpha = Math.min(0.85, Math.max(0.12, cell.prob / 100));
+      td.style.backgroundColor = `rgba(0, 245, 255, ${alpha})`;
+      
+      td.innerHTML = `
+        <span class="cell-word">${cell.word}</span>
+        <span class="cell-prob">${cell.prob}%</span>
+      `;
+      td.onmouseenter = () => showModal(lIdx, pos, cell);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  const modal = document.getElementById('info-modal');
+  function showModal(loopIdx, pos, cell) {
+    modal.style.display = 'block';
+    document.getElementById('modal-title').innerText = `${payload.loops[loopIdx]} @ Pos ${pos} ("${payload.tokens[pos]}")`;
+    const top3Html = cell.top3.map((item, idx) => `
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">
+        <span>#${idx+1} <strong>${item.word}</strong></span>
+        <span style="color: var(--cyan);">${item.prob}%</span>
+      </div>
+    `).join('');
+    document.getElementById('modal-top3').innerHTML = top3Html;
+  }
+  document.body.onclick = () => modal.style.display = 'none';
+</script>
+
+</body>
+</html>

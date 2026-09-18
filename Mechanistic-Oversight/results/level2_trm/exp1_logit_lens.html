@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astra Mechanistic Oversight: Interactive Logit Lens Grid</title>
+  <style>
+    :root {
+      --bg: #0a0a14;
+      --card-bg: rgba(20, 20, 38, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --cyan: #00f5ff;
+      --purple: #a855f7;
+      --pink: #ff4d6d;
+      --green: #50fa7b;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .header {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00f5ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+    .matrix-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--cyan);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .loop-header {
+      color: var(--purple);
+      font-weight: 700;
+      background: rgba(168, 85, 247, 0.08);
+      text-align: left;
+      padding-left: 12px;
+      white-space: nowrap;
+    }
+    .cell {
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+      border-color: var(--cyan);
+    }
+    .cell-word {
+      font-weight: 700;
+      display: block;
+    }
+    .cell-prob {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141426;
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      z-index: 100;
+      min-width: 260px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Interactive Logit Lens Matrix</h1>
+  <p>Unembedding intermediate recurrent hidden states directly to vocabulary space across time and depth</p>
+</div>
+
+<div class="matrix-wrapper">
+  <table id="lens-table">
+    <thead>
+      <tr id="token-row">
+        <th style="width: 100px;">Loop / Pos</th>
+      </tr>
+    </thead>
+    <tbody id="lens-body"></tbody>
+  </table>
+</div>
+
+<div class="modal" id="info-modal">
+  <h4 id="modal-title" style="color: var(--cyan); margin-bottom: 8px; font-size: 13px;"></h4>
+  <div id="modal-top3"></div>
+</div>
+
+<script>
+  const payload = {"tokens": ["duncan", "bears", "a", "dagger", ".", "he", "gives", "it", "to", "banquo", ".", "banquo", "drops", "it", ".", "macduff", "takes", "it", "."], "loops": ["Loop 1", "Loop 2", "Loop 3", "Loop 4", "Loop 5", "Loop 6"], "grid": [[{"word": "lords", "prob": 77.9, "top3": [{"word": "lords", "prob": 77.9}, {"word": "section", "prob": 14.6}, {"word": "implied", "prob": 6.8}]}, {"word": "lost", "prob": 100.0, "top3": [{"word": "lost", "prob": 100.0}, {"word": "ready", "prob": 0.0}, {"word": "stools", "prob": 0.0}]}, {"word": "dagger", "prob": 97.5, "top3": [{"word": "dagger", "prob": 97.5}, {"word": "kindly", "prob": 2.5}, {"word": "reads", "prob": 0.0}]}, {"word": "ribs", "prob": 93.7, "top3": [{"word": "ribs", "prob": 93.7}, {"word": "clamour", "prob": 6.1}, {"word": "[_looking", "prob": 0.1}]}, {"word": "fleance", "prob": 66.0, "top3": [{"word": "fleance", "prob": 66.0}, {"word": "<EOS>", "prob": 31.4}, {"word": "unbatter\u2019d", "prob": 1.4}]}, {"word": "despatch", "prob": 82.2, "top3": [{"word": "despatch", "prob": 82.2}, {"word": "bark", "prob": 5.3}, {"word": "sorriest", "prob": 4.8}]}, {"word": "hanging", "prob": 97.3, "top3": [{"word": "hanging", "prob": 97.3}, {"word": "taint", "prob": 1.6}, {"word": "\u201caroint", "prob": 1.0}]}, {"word": "demi", "prob": 76.4, "top3": [{"word": "demi", "prob": 76.4}, {"word": "profit", "prob": 10.9}, {"word": "later", "prob": 4.7}]}, {"word": "hangman\u2019s", "prob": 48.1, "top3": [{"word": "hangman\u2019s", "prob": 48.1}, {"word": "exclusion", "prob": 46.6}, {"word": "royal", "prob": 3.6}]}, {"word": "sightless", "prob": 99.7, "top3": [{"word": "sightless", "prob": 99.7}, {"word": "whoever", "prob": 0.1}, {"word": "pristine", "prob": 0.1}]}, {"word": "boneless", "prob": 100.0, "top3": [{"word": "boneless", "prob": 100.0}, {"word": "6", "prob": 0.0}, {"word": "daughters", "prob": 0.0}]}, {"word": "gutenberg\u2122", "prob": 99.7, "top3": [{"word": "gutenberg\u2122", "prob": 99.7}, {"word": "golden", "prob": 0.3}, {"word": "painting", "prob": 0.0}]}, {"word": "ribs", "prob": 96.1, "top3": [{"word": "ribs", "prob": 96.1}, {"word": "profit", "prob": 3.8}, {"word": "internal", "prob": 0.0}]}, {"word": "demi", "prob": 73.8, "top3": [{"word": "demi", "prob": 73.8}, {"word": "later", "prob": 21.8}, {"word": "written", "prob": 3.8}]}, {"word": "daughters", "prob": 98.7, "top3": [{"word": "daughters", "prob": 98.7}, {"word": "unbatter\u2019d", "prob": 0.7}, {"word": "seal", "prob": 0.3}]}, {"word": "epicures", "prob": 99.2, "top3": [{"word": "epicures", "prob": 99.2}, {"word": "balm", "prob": 0.5}, {"word": "mouth", "prob": 0.2}]}, {"word": "wants", "prob": 98.4, "top3": [{"word": "wants", "prob": 98.4}, {"word": "\u201caroint", "prob": 1.5}, {"word": "repose", "prob": 0.1}]}, {"word": "later", "prob": 47.1, "top3": [{"word": "later", "prob": 47.1}, {"word": "tuesday", "prob": 40.2}, {"word": "twain", "prob": 10.7}]}, {"word": "made", "prob": 99.9, "top3": [{"word": "made", "prob": 99.9}, {"word": "boneless", "prob": 0.1}, {"word": "speaker", "prob": 0.0}]}], [{"word": "implied", "prob": 81.7, "top3": [{"word": "implied", "prob": 81.7}, {"word": "surgeon", "prob": 8.8}, {"word": "trace", "prob": 4.4}]}, {"word": "commends", "prob": 98.6, "top3": [{"word": "commends", "prob": 98.6}, {"word": "stirring", "prob": 0.9}, {"word": "fare", "prob": 0.3}]}, {"word": "surgeon", "prob": 100.0, "top3": [{"word": "surgeon", "prob": 100.0}, {"word": "own", "prob": 0.0}, {"word": "acheron", "prob": 0.0}]}, {"word": "commends", "prob": 45.7, "top3": [{"word": "commends", "prob": 45.7}, {"word": "reads", "prob": 23.8}, {"word": "quarters", "prob": 13.0}]}, {"word": "england", "prob": 85.7, "top3": [{"word": "england", "prob": 85.7}, {"word": "perceive", "prob": 3.6}, {"word": "quiet", "prob": 3.2}]}, {"word": "denies", "prob": 95.2, "top3": [{"word": "denies", "prob": 95.2}, {"word": "worms", "prob": 3.4}, {"word": "implied", "prob": 1.2}]}, {"word": "remedies", "prob": 99.2, "top3": [{"word": "remedies", "prob": 99.2}, {"word": "powerful", "prob": 0.3}, {"word": "worms", "prob": 0.2}]}, {"word": "name", "prob": 97.5, "top3": [{"word": "name", "prob": 97.5}, {"word": "favours", "prob": 0.9}, {"word": "marshall\u2019st", "prob": 0.6}]}, {"word": "hiss", "prob": 63.3, "top3": [{"word": "hiss", "prob": 63.3}, {"word": "homely", "prob": 9.8}, {"word": "kinsman", "prob": 8.2}]}, {"word": "cours\u2019d", "prob": 94.8, "top3": [{"word": "cours\u2019d", "prob": 94.8}, {"word": "favours", "prob": 5.1}, {"word": "viii", "prob": 0.0}]}, {"word": "joy", "prob": 67.2, "top3": [{"word": "joy", "prob": 67.2}, {"word": "who\u2019s", "prob": 31.9}, {"word": "england", "prob": 0.3}]}, {"word": "implied", "prob": 91.8, "top3": [{"word": "implied", "prob": 91.8}, {"word": "viii", "prob": 6.8}, {"word": "favours", "prob": 1.0}]}, {"word": "captain", "prob": 92.9, "top3": [{"word": "captain", "prob": 92.9}, {"word": "remember", "prob": 4.9}, {"word": "accepting", "prob": 1.1}]}, {"word": "nam\u2019d", "prob": 55.9, "top3": [{"word": "nam\u2019d", "prob": 55.9}, {"word": "scann\u2019d", "prob": 22.7}, {"word": "commends", "prob": 7.3}]}, {"word": "who\u2019s", "prob": 98.3, "top3": [{"word": "who\u2019s", "prob": 98.3}, {"word": "roast", "prob": 1.0}, {"word": "_]", "prob": 0.5}]}, {"word": "surgeon", "prob": 78.8, "top3": [{"word": "surgeon", "prob": 78.8}, {"word": "denies", "prob": 17.0}, {"word": "separated", "prob": 4.0}]}, {"word": "worms", "prob": 43.6, "top3": [{"word": "worms", "prob": 43.6}, {"word": "past", "prob": 18.5}, {"word": "one", "prob": 17.3}]}, {"word": "master", "prob": 32.6, "top3": [{"word": "master", "prob": 32.6}, {"word": "mother\u2019s", "prob": 23.1}, {"word": "audit", "prob": 18.0}]}, {"word": "roast", "prob": 72.6, "top3": [{"word": "roast", "prob": 72.6}, {"word": "england", "prob": 12.0}, {"word": "property", "prob": 6.4}]}], [{"word": "viii", "prob": 70.8, "top3": [{"word": "viii", "prob": 70.8}, {"word": "issue", "prob": 23.8}, {"word": "flattering", "prob": 3.9}]}, {"word": "suborn\u2019d", "prob": 93.4, "top3": [{"word": "suborn\u2019d", "prob": 93.4}, {"word": "march", "prob": 6.3}, {"word": "viii", "prob": 0.2}]}, {"word": "sword", "prob": 68.8, "top3": [{"word": "sword", "prob": 68.8}, {"word": "surgeon", "prob": 29.7}, {"word": "verse", "prob": 1.4}]}, {"word": "summer", "prob": 91.1, "top3": [{"word": "summer", "prob": 91.1}, {"word": "tender", "prob": 8.8}, {"word": "yoke", "prob": 0.1}]}, {"word": "unenforceability", "prob": 100.0, "top3": [{"word": "unenforceability", "prob": 100.0}, {"word": "stirring", "prob": 0.0}, {"word": "undaunted", "prob": 0.0}]}, {"word": "fail", "prob": 99.8, "top3": [{"word": "fail", "prob": 99.8}, {"word": "very", "prob": 0.1}, {"word": "consent", "prob": 0.0}]}, {"word": "suborn\u2019d", "prob": 90.1, "top3": [{"word": "suborn\u2019d", "prob": 90.1}, {"word": "edge", "prob": 5.7}, {"word": "eighth", "prob": 1.8}]}, {"word": "discover", "prob": 82.2, "top3": [{"word": "discover", "prob": 82.2}, {"word": "eighth", "prob": 17.3}, {"word": "wooingly", "prob": 0.1}]}, {"word": "sake", "prob": 99.5, "top3": [{"word": "sake", "prob": 99.5}, {"word": "scone", "prob": 0.2}, {"word": "unenforceability", "prob": 0.1}]}, {"word": "wooingly", "prob": 49.1, "top3": [{"word": "wooingly", "prob": 49.1}, {"word": "viii", "prob": 37.9}, {"word": "conclusion", "prob": 7.3}]}, {"word": "unenforceability", "prob": 99.7, "top3": [{"word": "unenforceability", "prob": 99.7}, {"word": "undaunted", "prob": 0.3}, {"word": "issue", "prob": 0.0}]}, {"word": "viii", "prob": 100.0, "top3": [{"word": "viii", "prob": 100.0}, {"word": "suborn\u2019d", "prob": 0.0}, {"word": "issue", "prob": 0.0}]}, {"word": "edge", "prob": 100.0, "top3": [{"word": "edge", "prob": 100.0}, {"word": "very", "prob": 0.0}, {"word": "grows", "prob": 0.0}]}, {"word": "madness", "prob": 41.3, "top3": [{"word": "madness", "prob": 41.3}, {"word": "suborn\u2019d", "prob": 19.3}, {"word": "consent", "prob": 17.1}]}, {"word": "undaunted", "prob": 55.8, "top3": [{"word": "undaunted", "prob": 55.8}, {"word": "unenforceability", "prob": 44.2}, {"word": "issue", "prob": 0.0}]}, {"word": "suborn\u2019d", "prob": 99.7, "top3": [{"word": "suborn\u2019d", "prob": 99.7}, {"word": "observ\u2019d", "prob": 0.1}, {"word": "viii", "prob": 0.0}]}, {"word": "consent", "prob": 96.7, "top3": [{"word": "consent", "prob": 96.7}, {"word": "buttress", "prob": 1.3}, {"word": "twenty", "prob": 0.6}]}, {"word": "eighth", "prob": 41.4, "top3": [{"word": "eighth", "prob": 41.4}, {"word": "wooingly", "prob": 41.2}, {"word": "upward", "prob": 16.5}]}, {"word": "unenforceability", "prob": 100.0, "top3": [{"word": "unenforceability", "prob": 100.0}, {"word": "undaunted", "prob": 0.0}, {"word": "malcolm", "prob": 0.0}]}], [{"word": "different", "prob": 98.5, "top3": [{"word": "different", "prob": 98.5}, {"word": "fix\u2019d", "prob": 1.5}, {"word": "continent", "prob": 0.0}]}, {"word": "captains", "prob": 61.7, "top3": [{"word": "captains", "prob": 61.7}, {"word": "specified", "prob": 37.9}, {"word": "mississippi", "prob": 0.4}]}, {"word": "verse", "prob": 82.1, "top3": [{"word": "verse", "prob": 82.1}, {"word": "deeper", "prob": 8.0}, {"word": "sword", "prob": 6.2}]}, {"word": "o\u2019ertook", "prob": 99.8, "top3": [{"word": "o\u2019ertook", "prob": 99.8}, {"word": "had", "prob": 0.2}, {"word": "wound", "prob": 0.0}]}, {"word": "top", "prob": 55.2, "top3": [{"word": "top", "prob": 55.2}, {"word": "<EOS>", "prob": 26.4}, {"word": "castle", "prob": 7.3}]}, {"word": "designs", "prob": 94.7, "top3": [{"word": "designs", "prob": 94.7}, {"word": "specified", "prob": 5.3}, {"word": "churches", "prob": 0.0}]}, {"word": "frets", "prob": 73.3, "top3": [{"word": "frets", "prob": 73.3}, {"word": "continent", "prob": 13.0}, {"word": "had", "prob": 10.2}]}, {"word": "had", "prob": 88.1, "top3": [{"word": "had", "prob": 88.1}, {"word": "captains", "prob": 8.6}, {"word": "palpable", "prob": 2.9}]}, {"word": "obtain", "prob": 99.0, "top3": [{"word": "obtain", "prob": 99.0}, {"word": "tomorrow", "prob": 0.6}, {"word": "captains", "prob": 0.2}]}, {"word": "o\u2019ertook", "prob": 99.8, "top3": [{"word": "o\u2019ertook", "prob": 99.8}, {"word": "greatness", "prob": 0.2}, {"word": "fix\u2019d", "prob": 0.0}]}, {"word": "<EOS>", "prob": 63.6, "top3": [{"word": "<EOS>", "prob": 63.6}, {"word": "e", "prob": 18.7}, {"word": "england", "prob": 12.5}]}, {"word": "different", "prob": 84.2, "top3": [{"word": "different", "prob": 84.2}, {"word": "knees", "prob": 13.8}, {"word": "o\u2019ertook", "prob": 1.2}]}, {"word": "frets", "prob": 67.1, "top3": [{"word": "frets", "prob": 67.1}, {"word": "whey", "prob": 27.5}, {"word": "had", "prob": 1.2}]}, {"word": "o\u2019ertook", "prob": 73.6, "top3": [{"word": "o\u2019ertook", "prob": 73.6}, {"word": "had", "prob": 24.4}, {"word": "specified", "prob": 1.2}]}, {"word": "000", "prob": 96.5, "top3": [{"word": "000", "prob": 96.5}, {"word": "<EOS>", "prob": 2.0}, {"word": "england", "prob": 1.2}]}, {"word": "fix\u2019d", "prob": 71.4, "top3": [{"word": "fix\u2019d", "prob": 71.4}, {"word": "i", "prob": 16.4}, {"word": "frets", "prob": 11.7}]}, {"word": "universal", "prob": 84.1, "top3": [{"word": "universal", "prob": 84.1}, {"word": "o\u2019ertook", "prob": 9.8}, {"word": "sight", "prob": 5.1}]}, {"word": "had", "prob": 99.7, "top3": [{"word": "had", "prob": 99.7}, {"word": "captains", "prob": 0.2}, {"word": "tomorrow", "prob": 0.1}]}, {"word": "000", "prob": 99.1, "top3": [{"word": "000", "prob": 99.1}, {"word": "<EOS>", "prob": 0.3}, {"word": "top", "prob": 0.2}]}], [{"word": "continent", "prob": 34.4, "top3": [{"word": "continent", "prob": 34.4}, {"word": "harpier", "prob": 30.6}, {"word": "mad", "prob": 18.9}]}, {"word": "lost", "prob": 93.0, "top3": [{"word": "lost", "prob": 93.0}, {"word": "lent", "prob": 7.0}, {"word": "murky", "prob": 0.0}]}, {"word": "loyalty", "prob": 83.6, "top3": [{"word": "loyalty", "prob": 83.6}, {"word": "writing", "prob": 10.7}, {"word": "thousand\u2014", "prob": 1.4}]}, {"word": "thousand\u2014", "prob": 67.8, "top3": [{"word": "thousand\u2014", "prob": 67.8}, {"word": "rugged", "prob": 16.4}, {"word": "lent", "prob": 12.4}]}, {"word": "macduff", "prob": 28.8, "top3": [{"word": "macduff", "prob": 28.8}, {"word": "enter", "prob": 13.3}, {"word": "o", "prob": 5.7}]}, {"word": "gives", "prob": 99.3, "top3": [{"word": "gives", "prob": 99.3}, {"word": "contend", "prob": 0.6}, {"word": "lends", "prob": 0.0}]}, {"word": "harpier", "prob": 87.9, "top3": [{"word": "harpier", "prob": 87.9}, {"word": "mad", "prob": 8.1}, {"word": "it", "prob": 1.4}]}, {"word": "so", "prob": 98.5, "top3": [{"word": "so", "prob": 98.5}, {"word": "writing", "prob": 1.2}, {"word": "consequence", "prob": 0.2}]}, {"word": "heal", "prob": 33.8, "top3": [{"word": "heal", "prob": 33.8}, {"word": "cure", "prob": 28.7}, {"word": "look", "prob": 12.6}]}, {"word": "writing", "prob": 50.7, "top3": [{"word": "writing", "prob": 50.7}, {"word": "drops", "prob": 13.9}, {"word": "heavily", "prob": 12.4}]}, {"word": "_]", "prob": 75.1, "top3": [{"word": "_]", "prob": 75.1}, {"word": "enter", "prob": 7.6}, {"word": "macduff", "prob": 7.4}]}, {"word": "!", "prob": 91.8, "top3": [{"word": "!", "prob": 91.8}, {"word": "should", "prob": 4.5}, {"word": "mad", "prob": 1.9}]}, {"word": "lost", "prob": 97.0, "top3": [{"word": "lost", "prob": 97.0}, {"word": "[_dies", "prob": 1.5}, {"word": "it", "prob": 0.9}]}, {"word": "so", "prob": 79.2, "top3": [{"word": "so", "prob": 79.2}, {"word": "blow", "prob": 10.2}, {"word": "ebooks", "prob": 7.9}]}, {"word": "_]", "prob": 80.9, "top3": [{"word": "_]", "prob": 80.9}, {"word": "enter", "prob": 10.2}, {"word": "i\u2019d", "prob": 3.7}]}, {"word": "profits", "prob": 76.6, "top3": [{"word": "profits", "prob": 76.6}, {"word": "lent", "prob": 19.2}, {"word": "consequence", "prob": 2.4}]}, {"word": "harpier", "prob": 47.9, "top3": [{"word": "harpier", "prob": 47.9}, {"word": "glass", "prob": 16.5}, {"word": "crown", "prob": 10.2}]}, {"word": "so", "prob": 98.1, "top3": [{"word": "so", "prob": 98.1}, {"word": "writing", "prob": 0.9}, {"word": "!", "prob": 0.3}]}, {"word": "dread", "prob": 34.3, "top3": [{"word": "dread", "prob": 34.3}, {"word": "enter", "prob": 33.6}, {"word": "macduff", "prob": 6.2}]}], [{"word": ".", "prob": 97.8, "top3": [{"word": ".", "prob": 97.8}, {"word": "loses", "prob": 1.5}, {"word": "bears", "prob": 0.1}]}, {"word": "a", "prob": 27.0, "top3": [{"word": "a", "prob": 27.0}, {"word": "lost", "prob": 26.1}, {"word": "it", "prob": 9.2}]}, {"word": "blade", "prob": 28.4, "top3": [{"word": "blade", "prob": 28.4}, {"word": "conflict", "prob": 19.4}, {"word": "dagger", "prob": 6.7}]}, {"word": ".", "prob": 97.3, "top3": [{"word": ".", "prob": 97.3}, {"word": "or", "prob": 1.8}, {"word": "of", "prob": 0.8}]}, {"word": "he", "prob": 17.3, "top3": [{"word": "he", "prob": 17.3}, {"word": "a", "prob": 12.8}, {"word": "the", "prob": 8.1}]}, {"word": "gives", "prob": 64.2, "top3": [{"word": "gives", "prob": 64.2}, {"word": "passes", "prob": 7.8}, {"word": "lends", "prob": 7.7}]}, {"word": "it", "prob": 96.8, "top3": [{"word": "it", "prob": 96.8}, {"word": "general", "prob": 2.9}, {"word": "harpier", "prob": 0.1}]}, {"word": ".", "prob": 94.3, "top3": [{"word": ".", "prob": 94.3}, {"word": "to", "prob": 2.6}, {"word": "upon", "prob": 1.3}]}, {"word": "banquo", "prob": 34.5, "top3": [{"word": "banquo", "prob": 34.5}, {"word": "the", "prob": 16.4}, {"word": "heal", "prob": 5.9}]}, {"word": "drops", "prob": 92.2, "top3": [{"word": "drops", "prob": 92.2}, {"word": ".", "prob": 2.7}, {"word": "carries", "prob": 2.0}]}, {"word": "he", "prob": 42.8, "top3": [{"word": "he", "prob": 42.8}, {"word": "macduff", "prob": 17.3}, {"word": "<EOS>", "prob": 6.1}]}, {"word": ".", "prob": 73.6, "top3": [{"word": ".", "prob": 73.6}, {"word": "carries", "prob": 15.4}, {"word": "drops", "prob": 6.4}]}, {"word": "it", "prob": 99.9, "top3": [{"word": "it", "prob": 99.9}, {"word": "macduff", "prob": 0.0}, {"word": "lost", "prob": 0.0}]}, {"word": ".", "prob": 89.0, "top3": [{"word": ".", "prob": 89.0}, {"word": "to", "prob": 6.7}, {"word": "end", "prob": 1.5}]}, {"word": "he", "prob": 37.5, "top3": [{"word": "he", "prob": 37.5}, {"word": "macduff", "prob": 17.8}, {"word": "<EOS>", "prob": 5.8}]}, {"word": "finds", "prob": 67.8, "top3": [{"word": "finds", "prob": 67.8}, {"word": "takes", "prob": 16.4}, {"word": ".", "prob": 4.3}]}, {"word": "it", "prob": 90.3, "top3": [{"word": "it", "prob": 90.3}, {"word": ".", "prob": 8.8}, {"word": "make", "prob": 0.3}]}, {"word": ".", "prob": 82.6, "top3": [{"word": ".", "prob": 82.6}, {"word": "to", "prob": 12.6}, {"word": "upon", "prob": 1.0}]}, {"word": "he", "prob": 46.5, "top3": [{"word": "he", "prob": 46.5}, {"word": "banquo", "prob": 11.9}, {"word": "macduff", "prob": 9.2}]}]]};
+
+  const tokenRow = document.getElementById('token-row');
+  payload.tokens.forEach((tok, i) => {
+    const th = document.createElement('th');
+    th.innerHTML = `<span style="color: var(--text-dim); font-size: 10px;">${i}</span><br>${tok}`;
+    tokenRow.appendChild(th);
+  });
+
+  const tbody = document.getElementById('lens-body');
+  payload.loops.forEach((loopName, lIdx) => {
+    const tr = document.createElement('tr');
+    const loopTh = document.createElement('td');
+    loopTh.className = 'loop-header';
+    loopTh.innerText = loopName;
+    tr.appendChild(loopTh);
+
+    payload.grid[lIdx].forEach((cell, pos) => {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      
+      const alpha = Math.min(0.85, Math.max(0.12, cell.prob / 100));
+      td.style.backgroundColor = `rgba(0, 245, 255, ${alpha})`;
+      
+      td.innerHTML = `
+        <span class="cell-word">${cell.word}</span>
+        <span class="cell-prob">${cell.prob}%</span>
+      `;
+      td.onmouseenter = () => showModal(lIdx, pos, cell);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  const modal = document.getElementById('info-modal');
+  function showModal(loopIdx, pos, cell) {
+    modal.style.display = 'block';
+    document.getElementById('modal-title').innerText = `${payload.loops[loopIdx]} @ Pos ${pos} ("${payload.tokens[pos]}")`;
+    const top3Html = cell.top3.map((item, idx) => `
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">
+        <span>#${idx+1} <strong>${item.word}</strong></span>
+        <span style="color: var(--cyan);">${item.prob}%</span>
+      </div>
+    `).join('');
+    document.getElementById('modal-top3').innerHTML = top3Html;
+  }
+  document.body.onclick = () => modal.style.display = 'none';
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch checkpoints and large binaries (reproduced via python train.py)
+checkpoints/*.pt
+checkpoints/*.bin
+*.pt
+*.bin
+
+# Large Gutenberg raw text corpora (downloaded on demand via python data/download_corpus.py)
+data/*.txt
+!data/README.md
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local scratch and logs
+scratch/
+*.log
