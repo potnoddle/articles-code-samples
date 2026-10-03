@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Astra Oversight: Latent Deliberation Token Evolution Map</title>
+<style>
+  :root {
+    --bg-primary: #0a0a14;
+    --bg-card: #131326;
+    --border: #232342;
+    --text-primary: #f0f0f8;
+    --text-muted: #8888a8;
+    --cyan: #00f5ff;
+    --gold: #ffb300;
+    --crimson: #ff4d6d;
+    --purple: #bd93f9;
+    --slate: #4b526d;
+    --green: #50fa7b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px;
+    line-height: 1.5;
+  }
+  .header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .badge {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(0, 245, 255, 0.15);
+    color: var(--cyan);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 245, 255, 0.3);
+  }
+  .header p {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+  }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .btn {
+    background: #1a1a33;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn:hover {
+    background: #252548;
+    border-color: #3b3b68;
+  }
+  .btn.active {
+    background: rgba(0, 245, 255, 0.2);
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .btn-play {
+    background: rgba(80, 250, 123, 0.15);
+    color: var(--green);
+    border-color: rgba(80, 250, 123, 0.3);
+    margin-left: auto;
+  }
+  .btn-play:hover {
+    background: rgba(80, 250, 123, 0.25);
+  }
+  .word-cloud {
+    min-height: 380px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 30px 10px;
+    background: rgba(10, 10, 20, 0.6);
+    border-radius: 8px;
+    border: 1px dashed var(--border);
+  }
+  .word-tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: #181830;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .word-tag.target {
+    background: rgba(0, 245, 255, 0.18);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 16px rgba(0, 245, 255, 0.25);
+  }
+  .word-tag.interim {
+    background: rgba(255, 179, 0, 0.18);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .word-tag.initial {
+    background: rgba(255, 77, 109, 0.18);
+    border-color: var(--crimson);
+    color: var(--crimson);
+  }
+  .word-tag.pronoun {
+    background: rgba(189, 147, 249, 0.15);
+    border-color: var(--purple);
+    color: var(--purple);
+  }
+  .word-val {
+    font-size: 11px;
+    opacity: 0.8;
+  }
+  .stats-card {
+    margin-bottom: 16px;
+  }
+  .stats-card h3 {
+    font-size: 14px;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .delta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 13px;
+  }
+  .delta-up { color: var(--green); font-weight: 600; }
+  .delta-down { color: var(--crimson); font-weight: 600; }
+  .callout {
+    background: rgba(0, 245, 255, 0.06);
+    border-left: 3px solid var(--cyan);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 20px;
+  }
+  .callout strong { color: #ffffff; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Astra Latent Deliberation: Token Evolution Map <span class="badge">Exp 1 Mechanistic Trace</span></h1>
+  <p>Live visualization of vocabulary probability redistribution across recurrent test-time loops ($L_1 	o L_4$). Watch how surface syntax collapses while the true entity winner emerges.</p>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="controls">
+      <div id="tab-btns"></div>
+      <button class="btn btn-play" id="play-btn" onclick="togglePlay()">&#9658; Play Sequence</button>
+    </div>
+
+    <div class="word-cloud" id="word-cloud"></div>
+
+    <div class="callout">
+      <strong>How to Interpret This Map:</strong> In Loops 1 & 2, the model relies on general syntax inertia (<code>there</code>, <code>he</code>, <code>the</code>). By Loop 3, candidate entities incubate, and by Loop 4, <strong>Macduff</strong> takes command of the content vocabulary at 21.52% (+21.5% net growth), resolving the multi-step ownership transfer.
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="stats-card">
+      <h3 style="color: var(--green);">Fastest Growing Tokens</h3>
+      <div id="growing-tokens"></div>
+    </div>
+
+    <div class="stats-card" style="margin-top: 24px;">
+      <h3 style="color: var(--crimson);">Fastest Shrinking Tokens</h3>
+      <div id="shrinking-tokens"></div>
+    </div>
+
+    <div class="stats-card" style="margin-top: 24px;">
+      <h3>Current Loop Winner</h3>
+      <div id="loop-winner" style="font-size: 18px; font-weight: 700; color: var(--cyan); margin-top: 4px;">-</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const data = {"labels": ["Loop 1", "Loop 2", "Loop 3", "Loop 4"], "loops": [[{"word": "<EOS>", "prob": 49.26}, {"word": ".", "prob": 17.01}, {"word": "he", "prob": 14.6}, {"word": "duncan", "prob": 3.98}, {"word": "macduff", "prob": 3.29}, {"word": "the", "prob": 1.09}, {"word": "makes", "prob": 1.03}, {"word": "gold", "prob": 0.75}, {"word": "doctor", "prob": 0.46}, {"word": "so", "prob": 0.44}, {"word": "healer", "prob": 0.43}, {"word": "physician", "prob": 0.43}], [{"word": "<EOS>", "prob": 89.17}, {"word": "he", "prob": 7.27}, {"word": "macduff", "prob": 1.39}, {"word": "duncan", "prob": 0.59}, {"word": ".", "prob": 0.33}, {"word": "the", "prob": 0.12}, {"word": "banquo", "prob": 0.12}, {"word": "upon", "prob": 0.05}, {"word": "doctor", "prob": 0.04}, {"word": "makes", "prob": 0.04}, {"word": "takes", "prob": 0.04}, {"word": "physician", "prob": 0.04}], [{"word": "<EOS>", "prob": 94.85}, {"word": "he", "prob": 3.73}, {"word": "macduff", "prob": 0.6}, {"word": "duncan", "prob": 0.28}, {"word": "banquo", "prob": 0.08}, {"word": "the", "prob": 0.03}, {"word": ".", "prob": 0.03}, {"word": "takes", "prob": 0.02}, {"word": "tools", "prob": 0.02}, {"word": "doth", "prob": 0.01}, {"word": "nothing", "prob": 0.01}, {"word": "never", "prob": 0.01}], [{"word": "<EOS>", "prob": 96.05}, {"word": "he", "prob": 2.75}, {"word": "macduff", "prob": 0.43}, {"word": "duncan", "prob": 0.26}, {"word": "banquo", "prob": 0.11}, {"word": "takes", "prob": 0.04}, {"word": "never", "prob": 0.03}, {"word": "tools", "prob": 0.02}, {"word": "the", "prob": 0.02}, {"word": "doth", "prob": 0.02}, {"word": "mentor", "prob": 0.01}, {"word": "nothing", "prob": 0.01}]]};
+  let currentLoop = 3; // Default to Loop 4
+  let playInterval = null;
+
+  function init() {
+    const tabContainer = document.getElementById("tab-btns");
+    data.labels.forEach((label, idx) => {
+      const btn = document.createElement("button");
+      btn.className = `btn ${idx === currentLoop ? 'active' : ''}`;
+      btn.id = `btn-${idx}`;
+      btn.innerText = label;
+      btn.onclick = () => selectLoop(idx);
+      tabContainer.appendChild(btn);
+    });
+    renderLoop(currentLoop);
+    renderDeltas();
+  }
+
+  function selectLoop(idx) {
+    currentLoop = idx;
+    data.labels.forEach((_, i) => {
+      const b = document.getElementById(`btn-${i}`);
+      if (b) b.className = `btn ${i === currentLoop ? 'active' : ''}`;
+    });
+    renderLoop(currentLoop);
+  }
+
+  function renderLoop(idx) {
+    const cloud = document.getElementById("word-cloud");
+    cloud.innerHTML = "";
+    const loopTokens = data.loops[idx] || [];
+
+    // Find loop winner
+    const winnerEl = document.getElementById("loop-winner");
+    if (loopTokens.length > 0) {
+      const topWord = loopTokens[0];
+      winnerEl.innerText = `${topWord.word} (${topWord.prob.toFixed(1)}%)`;
+    }
+
+    loopTokens.forEach(t => {
+      const tag = document.createElement("div");
+      const wLower = t.word.toLowerCase();
+      let cls = "word-tag";
+      if (wLower === "macduff") cls += " target";
+      else if (wLower === "banquo") cls += " interim";
+      else if (wLower === "duncan") cls += " initial";
+      else if (["he", "she", "there", "it"].includes(wLower)) cls += " pronoun";
+
+      const scale = Math.max(13, Math.min(42, Math.round(13 + Math.sqrt(t.prob) * 4.2)));
+      tag.className = cls;
+      tag.style.fontSize = `${scale}px`;
+      tag.innerHTML = `<strong>${t.word}</strong><span class="word-val">${t.prob.toFixed(1)}%</span>`;
+      cloud.appendChild(tag);
+    });
+  }
+
+  function renderDeltas() {
+    const l1 = {};
+    (data.loops[0] || []).forEach(t => { l1[t.word] = t.prob; });
+    const l4 = {};
+    (data.loops[3] || []).forEach(t => { l4[t.word] = t.prob; });
+
+    const allWords = Array.from(new Set([...Object.keys(l1), ...Object.keys(l4)]));
+    const deltas = allWords.map(w => ({
+      word: w,
+      d: (l4[w] || 0) - (l1[w] || 0)
+    }));
+
+    deltas.sort((a, b) => b.d - a.d);
+    const growing = deltas.filter(d => d.d > 0.5).slice(0, 5);
+    const shrinking = [...deltas].filter(d => d.d < -0.5).sort((a, b) => a.d - b.d).slice(0, 5);
+
+    const growEl = document.getElementById("growing-tokens");
+    growEl.innerHTML = growing.map(g => `
+      <div class="delta-row">
+        <span>${g.word}</span>
+        <span class="delta-up">+${g.d.toFixed(1)}%</span>
+      </div>
+    `).join("");
+
+    const shrinkEl = document.getElementById("shrinking-tokens");
+    shrinkEl.innerHTML = shrinking.map(s => `
+      <div class="delta-row">
+        <span>${s.word}</span>
+        <span class="delta-down">${s.d.toFixed(1)}%</span>
+      </div>
+    `).join("");
+  }
+
+  function togglePlay() {
+    const pBtn = document.getElementById("play-btn");
+    if (playInterval) {
+      clearInterval(playInterval);
+      playInterval = null;
+      pBtn.innerHTML = "&#9658; Play Sequence";
+    } else {
+      currentLoop = 0;
+      selectLoop(currentLoop);
+      pBtn.innerHTML = "&#10074;&#10074; Pause";
+      playInterval = setInterval(() => {
+        currentLoop = (currentLoop + 1) % data.labels.length;
+        selectLoop(currentLoop);
+      }, 1200);
+    }
+  }
+
+  init();
+</script>
+
+</body>
+</html>

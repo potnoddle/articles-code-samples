@@ -1,0 +1,45 @@
+{
+  "audit_version": "1.0-forensic",
+  "timestamp_utc": "2026-09-11T19:50:56Z",
+  "regulatory_compliance": [
+    "EU AI Act (2024/1689) Art 12 - Record-Keeping",
+    "EU AI Act Art 14 - Human Oversight",
+    "EU AI Act Art 15 - Robustness & Cybersecurity",
+    "FDA 21 CFR Part 11 - Electronic Records Integrity",
+    "FINRA Rule 3110 / SEC 17a-4 - Algorithmic Auditability"
+  ],
+  "hardware_environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.12.8",
+    "torch_version": "2.5.1+cpu",
+    "cuda_available": false,
+    "device": "cpu"
+  },
+  "deterministic_bounds": {
+    "temperature": 0.0,
+    "seed": 42,
+    "is_deterministic": true
+  },
+  "cryptographic_provenance": {
+    "model_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level2_irt_model.pt",
+    "model_sha256": "36d63de940b8fda58bed102395d9b549474a0b5e77897fad9deae1782966c08d",
+    "tokenizer_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level2_irt_tokenizer.pkl",
+    "tokenizer_sha256": "9f66accd712e0dc2af12f67a04920568d5402875f82916a0516921d5756037d2",
+    "latent_slices_sha256": "7508187e24c78099ae6ba6fe27a9f2d53ac38442ae74c8c437999d169d42a464",
+    "num_recurrent_loops": 6
+  },
+  "inference_record": {
+    "prompt": "Duncan bears a dagger . He gives it to Banquo . Banquo drops it . Macduff takes it .",
+    "emitted_output": "he"
+  },
+  "metadata": {
+    "tier_level": 2,
+    "tier_name": "Tier 2: Macbeth Dramatic Benchmark",
+    "model_type": "irt",
+    "architecture_name": "InfilledRecurrentTransformer (IRT)",
+    "oversight_mechanism": "Dual-state recursion tracking: decoupled latent reasoning vector z and solution vector y; 3D WebGL orbit phase space; 2D Logit Lens grid",
+    "efficiency_tradeoffs": "17% parameter savings via weight sharing (3.46M params); 4.6x BPTT training compute cost; 19.7x latency vs. 1-pass feedforward",
+    "experiments_executed": 7
+  },
+  "receipt_sha256": "f872de3eefe889e2e9181818443d55b7d26291f068896e626060d9ee29cbd34c"
+}

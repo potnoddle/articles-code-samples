@@ -1,0 +1,45 @@
+{
+  "audit_version": "1.0-forensic",
+  "timestamp_utc": "2026-09-11T19:00:04Z",
+  "regulatory_compliance": [
+    "EU AI Act (2024/1689) Art 12 - Record-Keeping",
+    "EU AI Act Art 14 - Human Oversight",
+    "EU AI Act Art 15 - Robustness & Cybersecurity",
+    "FDA 21 CFR Part 11 - Electronic Records Integrity",
+    "FINRA Rule 3110 / SEC 17a-4 - Algorithmic Auditability"
+  ],
+  "hardware_environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.12.8",
+    "torch_version": "2.5.1+cpu",
+    "cuda_available": false,
+    "device": "cpu"
+  },
+  "deterministic_bounds": {
+    "temperature": 0.0,
+    "seed": 42,
+    "is_deterministic": true
+  },
+  "cryptographic_provenance": {
+    "model_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level1_irt_model.pt",
+    "model_sha256": "1124796468ff625c12dee856b685a3583a1d87affa2388753601569b722f2a37",
+    "tokenizer_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level1_irt_tokenizer.pkl",
+    "tokenizer_sha256": "34699a57ee901fe688b144f13a956f8d20a7cfa6860e8b97646e841f7cc2bc65",
+    "latent_slices_sha256": "e85ccc7bf7870a668ce0a54d3242f6436950ebcb425351ea2882549bcd867a3a",
+    "num_recurrent_loops": 4
+  },
+  "inference_record": {
+    "prompt": "Duncan bears a dagger . He gives it to Banquo . Banquo drops it . Macduff takes it .",
+    "emitted_output": ""
+  },
+  "metadata": {
+    "tier_level": 1,
+    "tier_name": "Tier 1: Micro-Scale Logic Harness",
+    "model_type": "irt",
+    "architecture_name": "InfilledRecurrentTransformer (IRT)",
+    "oversight_mechanism": "Single-layer weight-tied activation recording, linear probe readout, embedding surgery verification",
+    "efficiency_tradeoffs": "Ultra-fast zero-latency CPU footprint; high parameter reuse (~533K\u20131.5M params); memory bound by single-layer cache",
+    "experiments_executed": 7
+  },
+  "receipt_sha256": "3874879041d5b3148441f571ca77f7a4d834918abdc11f518cb4a94e54b96a3c"
+}

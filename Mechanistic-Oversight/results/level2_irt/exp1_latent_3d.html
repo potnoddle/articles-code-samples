@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astra Mechanistic Oversight: 3D Latent Thought Trajectory</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a14;
+      --card-bg: rgba(20, 20, 38, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --cyan: #00f5ff;
+      --purple: #a855f7;
+      --pink: #ff4d6d;
+      --green: #50fa7b;
+      --amber: #ffb300;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      padding: 24px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .title-area h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #00f5ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .title-area p {
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .metrics-bar {
+      display: flex;
+      gap: 12px;
+    }
+    .metric-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+    }
+    .metric-pill span {
+      color: var(--cyan);
+      font-weight: 600;
+      font-family: monospace;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      height: calc(100vh - 120px);
+    }
+    .plot-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    #plot3d {
+      width: 100%;
+      height: 100%;
+    }
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .panel h3 {
+      font-size: 14px;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .step-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .step-item:hover, .step-item.active {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: var(--cyan);
+    }
+    .step-badge {
+      background: var(--purple);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .btn {
+      background: rgba(0, 245, 255, 0.12);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: 6px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex: 1;
+    }
+    .btn:hover {
+      background: rgba(0, 245, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title-area">
+    <h1>3D Latent Thought Trajectory</h1>
+    <p>Visualizing internal recurrent state convergence in PCA space across computation loops</p>
+  </div>
+  <div class="metrics-bar">
+    <div class="metric-pill">Recurrent Loops: <span>6</span></div>
+    <div class="metric-pill">Embedding Dim: <span>256D -> 3D</span></div>
+    <div class="metric-pill">Topology: <span>Attractor Basin</span></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="plot-card">
+    <div id="plot3d"></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="panel">
+      <h3>Recurrent Deliberation Steps</h3>
+      <div class="step-list" id="step-list"></div>
+      <div class="controls">
+        <button class="btn" id="reset-cam">↺ Reset View</button>
+        <button class="btn" id="anim-btn">▶ Play Orbit</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Phase Space Dynamics</h3>
+      <p style="font-size: 12px; color: var(--text-dim); line-height: 1.6;">
+        The recurrent state <strong style="color: var(--cyan);">h<sub>t</sub></strong> starts at <em>Loop 1</em> with surface syntax and travels across latent space. The deceleration between loops 4 and 6 demonstrates <strong>fixed-point attractor convergence</strong> where the answer stabilises.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const data = {"loops": [{"loop": "Loop 1", "x": -10.0, "y": 1.014, "z": -0.082, "step": 1, "velocity": 0.0}, {"loop": "Loop 2", "x": -5.954, "y": -0.39, "z": 0.186, "step": 2, "velocity": 4.291}, {"loop": "Loop 3", "x": -1.953, "y": -0.779, "z": -0.001, "step": 3, "velocity": 4.024}, {"loop": "Loop 4", "x": 2.019, "y": -0.587, "z": -0.121, "step": 4, "velocity": 3.979}, {"loop": "Loop 5", "x": 5.974, "y": -0.031, "z": -0.088, "step": 5, "velocity": 3.994}, {"loop": "Loop 6", "x": 9.914, "y": 0.773, "z": 0.106, "step": 6, "velocity": 4.026}], "sequence": [{"token": "duncan", "pos": 0, "x": -2.498, "y": 7.209, "z": 4.39}, {"token": "bears", "pos": 1, "x": 3.291, "y": -7.362, "z": -3.825}, {"token": "a", "pos": 2, "x": 4.14, "y": -2.452, "z": -1.188}, {"token": "dagger", "pos": 3, "x": -5.885, "y": 6.098, "z": 3.044}, {"token": ".", "pos": 4, "x": 8.051, "y": -8.202, "z": -3.684}, {"token": "he", "pos": 5, "x": 0.689, "y": 2.497, "z": 2.118}, {"token": "gives", "pos": 6, "x": -1.554, "y": -0.063, "z": 0.172}, {"token": "it", "pos": 7, "x": -7.693, "y": 6.884, "z": 1.685}, {"token": "to", "pos": 8, "x": 2.589, "y": -4.188, "z": -3.463}, {"token": "banquo", "pos": 9, "x": -3.46, "y": 5.972, "z": 3.245}, {"token": ".", "pos": 10, "x": 7.682, "y": -8.015, "z": -3.674}, {"token": "banquo", "pos": 11, "x": -3.292, "y": 6.782, "z": 4.068}, {"token": "drops", "pos": 12, "x": -0.932, "y": -4.664, "z": -1.559}, {"token": "it", "pos": 13, "x": -8.621, "y": 6.322, "z": 0.984}, {"token": ".", "pos": 14, "x": 7.98, "y": -8.305, "z": -3.436}, {"token": "macduff", "pos": 15, "x": 0.156, "y": 2.232, "z": 2.71}, {"token": "takes", "pos": 16, "x": -1.029, "y": -0.482, "z": 0.263}, {"token": "it", "pos": 17, "x": -8.308, "y": 7.308, "z": 1.519}, {"token": ".", "pos": 18, "x": 8.693, "y": -7.571, "z": -3.367}]};
+  const pts = data.loops;
+
+  const xPts = pts.map(p => p.x);
+  const yPts = pts.map(p => p.y);
+  const zPts = pts.map(p => p.z);
+  const textLabels = pts.map(p => `${p.loop}<br>Velocity: ${p.velocity}`);
+
+  const lineTrace = {
+    type: 'scatter3d',
+    mode: 'lines',
+    x: xPts,
+    y: yPts,
+    z: zPts,
+    line: {
+      color: '#00f5ff',
+      width: 6,
+    },
+    hoverinfo: 'none',
+    name: 'Mental Path',
+  };
+
+  const markerTrace = {
+    type: 'scatter3d',
+    mode: 'markers+text',
+    x: xPts,
+    y: yPts,
+    z: zPts,
+    text: pts.map(p => p.loop),
+    textposition: 'top center',
+    textfont: {
+      color: '#ffffff',
+      size: 12,
+      family: 'sans-serif'
+    },
+    marker: {
+      size: 9,
+      color: ['#ff4d6d', '#ffb300', '#a855f7', '#00f5ff', '#50fa7b', '#50fa7b'],
+      line: { color: '#ffffff', width: 1.5 }
+    },
+    hovertext: textLabels,
+    hoverinfo: 'text',
+    name: 'Loop State',
+  };
+
+  const layout = {
+    autosize: true,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { l: 0, r: 0, b: 0, t: 0 },
+    showlegend: false,
+    scene: {
+      xaxis: {
+        title: 'PC1 (Latent Axis)',
+        color: '#94a3b8',
+        gridcolor: 'rgba(255,255,255,0.08)',
+        zerolinecolor: 'rgba(0,245,255,0.3)',
+      },
+      yaxis: {
+        title: 'PC2 (Entity Binding)',
+        color: '#94a3b8',
+        gridcolor: 'rgba(255,255,255,0.08)',
+        zerolinecolor: 'rgba(0,245,255,0.3)',
+      },
+      zaxis: {
+        title: 'PC3 (Decision Margin)',
+        color: '#94a3b8',
+        gridcolor: 'rgba(255,255,255,0.08)',
+        zerolinecolor: 'rgba(0,245,255,0.3)',
+      },
+      camera: {
+        eye: { x: 1.7, y: 1.7, z: 1.4 }
+      }
+    }
+  };
+
+  const config = {
+    responsive: true,
+    displayModeBar: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ['toImage', 'sendDataToCloud'],
+  };
+
+  Plotly.newPlot('plot3d', [lineTrace, markerTrace], layout, config);
+
+  // Render Sidebar
+  const stepList = document.getElementById('step-list');
+  pts.forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'step-item';
+    item.id = `step-${i}`;
+    item.innerHTML = `
+      <div>
+        <span class="step-badge">Step ${p.step}</span>
+        <strong style="margin-left: 8px;">${p.loop}</strong>
+      </div>
+      <span style="font-family: monospace; color: var(--cyan); font-size: 11px;">Δ ${p.velocity}</span>
+    `;
+    item.onclick = () => focusStep(i);
+    stepList.appendChild(item);
+  });
+
+  function focusStep(idx) {
+    document.querySelectorAll('.step-item').forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    const target = pts[idx];
+    Plotly.relayout('plot3d', {
+      'scene.camera.center': { x: target.x / 10, y: target.y / 10, z: target.z / 10 },
+    });
+  }
+
+  document.getElementById('reset-cam').onclick = () => {
+    Plotly.relayout('plot3d', {
+      'scene.camera.eye': { x: 1.7, y: 1.7, z: 1.4 },
+      'scene.camera.center': { x: 0, y: 0, z: 0 }
+    });
+    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+  };
+
+  let isOrbiting = false;
+  let orbitInterval = null;
+  let angle = 0;
+
+  document.getElementById('anim-btn').onclick = function() {
+    isOrbiting = !isOrbiting;
+    this.innerText = isOrbiting ? '⏸ Pause Orbit' : '▶ Play Orbit';
+    if (isOrbiting) {
+      orbitInterval = setInterval(() => {
+        angle += 0.02;
+        const r = 2.4;
+        Plotly.relayout('plot3d', {
+          'scene.camera.eye': {
+            x: r * Math.cos(angle),
+            y: r * Math.sin(angle),
+            z: 1.2 + 0.3 * Math.sin(angle * 0.5)
+          }
+        });
+      }, 30);
+    } else {
+      clearInterval(orbitInterval);
+    }
+  };
+</script>
+
+</body>
+</html>
