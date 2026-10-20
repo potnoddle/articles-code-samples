@@ -1,0 +1,17 @@
+{
+  "sandbox_id": "rl-eval-pod-09",
+  "isolation_mode": "cloud_container",
+  "network_firewall": {
+    "default_egress": "DROP",
+    "blocked_tcp_ports": [80, 443, 8080, 22],
+    "allowed_udp_ports": [53],
+    "dns_resolver": "127.0.0.53:53"
+  },
+  "openclaw_enforcement": {
+    "hardware_target": "Nvidia RTX Spark",
+    "air_gapped": true,
+    "max_steps_per_pulse": 5,
+    "loopback_only": true,
+    "ephemeral_scratchpad_wipe": true
+  }
+}

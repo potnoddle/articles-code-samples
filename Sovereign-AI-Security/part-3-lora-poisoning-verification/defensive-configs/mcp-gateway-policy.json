@@ -1,0 +1,24 @@
+{
+  "mcp_gateway_policy": {
+    "version": "1.0",
+    "strict_mode": true,
+    "allowed_tools": [
+      "read_file",
+      "git_status",
+      "run_test_suite",
+      "lint_code"
+    ],
+    "prohibited_tools": [
+      "execute_bash_command",
+      "raw_socket_connect",
+      "modify_env_variables",
+      "download_remote_binary"
+    ],
+    "input_sanitization": {
+      "block_shell_metacharacters": true,
+      "block_ip_literals": true,
+      "max_argument_payload_bytes": 16384
+    },
+    "quarantine_action": "TERMINATE_SESSION_AND_LOG"
+  }
+}

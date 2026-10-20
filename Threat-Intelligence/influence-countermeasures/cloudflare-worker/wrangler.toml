@@ -1,0 +1,17 @@
+name = "cognitive-defense-gateway"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[ai]
+binding = "AI"
+
+[[kv_namespaces]]
+binding = "SESSION_KV"
+id = "mock-session-kv-id"
+
+# [[vectorize]]
+# binding = "VECTOR_INDEX"
+# index_name = "conversational-turns-index"
+
+[vars]
+AI_GATEWAY_URL = "" # e.g. "https://gateway.ai.cloudflare.com/v1/account-id/my-gateway/anthropic/v1/messages"

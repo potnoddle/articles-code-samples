@@ -1,0 +1,3 @@
+# Ignore downloaded Gutenberg corpora
+*.txt
+!README.md

@@ -1,0 +1,11 @@
+{
+  "experiment": "Part 2 - Pipeline Lint Latency & HITL Triage",
+  "simulated_assets": 50,
+  "avg_lint_latency_ms": 0.005,
+  "total_batch_time_ms": 0.3,
+  "hitl_routing": {
+    "AUTO_APPROVE": 30,
+    "STEWARD_REVIEW": 0,
+    "HARD_BLOCK": 20
+  }
+}

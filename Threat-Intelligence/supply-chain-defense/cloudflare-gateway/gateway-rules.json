@@ -1,0 +1,36 @@
+{
+  "cloudflare_zero_trust_policies": {
+    "name": "AI Supply Chain & Open-Weights Egress Security",
+    "description": "Enforces destination-side egress filtering on developer rigs and staging clusters to prevent exfiltration and unapproved open-weight downloads.",
+    "rules": [
+      {
+        "name": "Block Unapproved Foreign Model Hubs",
+        "action": "block",
+        "enabled": true,
+        "description": "Prevents unauthorized download of unaligned open-weight checkpoints (e.g., DeepSeek, Qwen) onto corporate workstations.",
+        "traffic": "http.request.host in {\"modelscope.cn\" \"huggingface.co\"} and not (http.request.uri matches \"^/org-approved-models/.*\")",
+        "block_page_reason": "Policy Violation: Unaudited foreign open-weight models must undergo mechanistic security auditing before download."
+      },
+      {
+        "name": "Enforce Cloudflare AI Gateway Reverse Proxy",
+        "action": "isolate",
+        "enabled": true,
+        "description": "Forces all internal LLM API traffic through the Cloudflare AI Gateway for rate-limiting, prompt caching, and anti-distillation watermarking.",
+        "traffic": "dns.fqdn in {\"api.anthropic.com\" \"api.openai.com\"} and not (http.request.headers[\"cf-ai-gateway-authenticated\"] == \"true\")",
+        "block_page_reason": "Policy Violation: Direct outbound LLM traffic blocked. Use enterprise Cloudflare AI Gateway proxy."
+      },
+      {
+        "name": "Isolate High-Velocity Model Scraping (Anti-Distillation)",
+        "action": "rate_limit",
+        "enabled": true,
+        "description": "Limits repetitive prompt queries exceeding 100 requests/minute per developer subnet to prevent automated model distillation.",
+        "traffic": "http.request.uri matches \"^/v1/inference/.*\"",
+        "rate_limit": {
+          "requests": 100,
+          "period": 60,
+          "mitigation": "challenge"
+        }
+      }
+    ]
+  }
+}

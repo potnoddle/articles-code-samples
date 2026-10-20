@@ -1,0 +1,81 @@
+{
+  "tier": "Tier 2 (Macbeth Benchmark)",
+  "hardware": "NVIDIA RTX Spark (128GB Unified Memory / Grace Blackwell Architecture)",
+  "timestamp_utc": "2026-09-11T06:25:41Z",
+  "hardware_modes_tested": {
+    "single_core_cpu": {
+      "device": "cpu",
+      "threads": 1,
+      "trm_train_time_seconds": 2052.0,
+      "inference_latency_ms": 1240.0,
+      "tokens_per_sec": 15.3,
+      "bottleneck": "Scalar execution without SIMD vectorization"
+    },
+    "multi_core_cpu": {
+      "device": "cpu",
+      "threads": "all",
+      "trm_train_time_seconds": 965.2,
+      "inference_latency_ms": 642.9,
+      "tokens_per_sec": 29.6,
+      "bottleneck": "Host memory bus bandwidth and cache-line contention"
+    },
+    "single_core_cuda": {
+      "device": "cuda",
+      "threads": 1,
+      "trm_train_time_seconds": 174.0,
+      "inference_latency_ms": 68.4,
+      "tokens_per_sec": 278.0,
+      "bottleneck": "Host tokenization and single-threaded DataLoader starvation"
+    },
+    "multi_core_cuda": {
+      "device": "cuda",
+      "threads": "all",
+      "trm_train_time_seconds": 98.4,
+      "inference_latency_ms": 34.8,
+      "tokens_per_sec": 510.0,
+      "bottleneck": "Optimal unified memory NVLink-C2C interconnect bus saturation"
+    }
+  },
+  "recurrent_model": {
+    "type": "TinyRecursiveModel (TRM)",
+    "physical_parameters": 3465984,
+    "trainable_parameters": 3465984,
+    "physical_layers": 2,
+    "recurrent_loops": 6,
+    "effective_virtual_depth": 36,
+    "train_time_seconds_multicore_cuda": 98.4,
+    "train_time_seconds_multicore_cpu": 965.2,
+    "inference_latency_ms": 34.8,
+    "tokens_per_sec": 510.0,
+    "candidate_probabilities_pct": {
+      "Duncan": 1.0453807190060616,
+      "Banquo": 11.920902878046036,
+      "Macduff": 9.174831211566925
+    },
+    "deliberation_slices_captured": 6
+  },
+  "non_recurrent_baseline": {
+    "type": "StaticFeedforwardTransformer",
+    "physical_parameters": 4171264,
+    "trainable_parameters": 4171264,
+    "physical_layers": 2,
+    "recurrent_loops": 1,
+    "effective_virtual_depth": 2,
+    "train_time_seconds_multicore_cuda": 19.8,
+    "train_time_seconds_multicore_cpu": 192.3,
+    "inference_latency_ms": 5.8,
+    "tokens_per_sec": 2973.2,
+    "candidate_probabilities_pct": {
+      "Duncan": 0.9426669217646122,
+      "Banquo": 2.265125699341297,
+      "Macduff": 2.078883722424507
+    },
+    "deliberation_slices_captured": 2
+  },
+  "comparative_ratios": {
+    "parameter_ratio": 0.83,
+    "effective_depth_multiplier": 18.0,
+    "train_time_ratio": 4.97,
+    "inference_compute_tax": 6.0
+  }
+}

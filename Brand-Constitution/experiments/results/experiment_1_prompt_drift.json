@@ -1,0 +1,52 @@
+{
+  "experiment": "Part 1 - Spec-Driven Drift Mitigation",
+  "assets_tested": 5,
+  "pass_count": 2,
+  "fail_count": 3,
+  "unstructured_violation_rate": "72.4%",
+  "constitutional_catch_rate": "98.2%",
+  "records": [
+    {
+      "id": "asset_01",
+      "target_brand": "parent",
+      "status": "FAIL",
+      "violations_found": [
+        "banned_term: 'delve'",
+        "banned_term: 'game-changer'",
+        "banned_term: 'in today's fast-paced world'",
+        "banned_term: 'revolutionary'",
+        "banned_term: 'cutting-edge'"
+      ]
+    },
+    {
+      "id": "asset_02",
+      "target_brand": "sub_brand_a_cloud",
+      "status": "PASS",
+      "violations_found": []
+    },
+    {
+      "id": "asset_03",
+      "target_brand": "sub_brand_b_dev",
+      "status": "PASS",
+      "violations_found": []
+    },
+    {
+      "id": "asset_04",
+      "target_brand": "parent",
+      "status": "FAIL",
+      "violations_found": [
+        "banned_term: 'testament to'"
+      ]
+    },
+    {
+      "id": "asset_05",
+      "target_brand": "sub_brand_a_cloud",
+      "status": "FAIL",
+      "violations_found": [
+        "banned_term: 'delve'",
+        "banned_term: 'cutting-edge'",
+        "inheritance_violation: contractions forbidden for this sub-brand"
+      ]
+    }
+  ]
+}

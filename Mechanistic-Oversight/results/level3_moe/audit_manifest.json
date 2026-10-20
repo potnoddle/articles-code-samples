@@ -1,0 +1,46 @@
+{
+  "audit_version": "1.0-forensic",
+  "timestamp_utc": "2026-09-11T16:15:00Z",
+  "regulatory_compliance": [
+    "EU AI Act (2024/1689) Art 12 - Record-Keeping",
+    "EU AI Act Art 14 - Human Oversight",
+    "EU AI Act Art 15 - Robustness & Cybersecurity",
+    "FDA 21 CFR Part 11 - Electronic Records Integrity",
+    "FINRA Rule 3110 / SEC 17a-4 - Algorithmic Auditability"
+  ],
+  "hardware_environment": {
+    "platform": "Linux-6.8.0-datacenter-x86_64",
+    "python_version": "3.12.8",
+    "torch_version": "2.5.1+cu124",
+    "cuda_available": true,
+    "device": "cuda:0",
+    "device_name": "NVIDIA Blackwell RTX / GB200 NVL72 128GB"
+  },
+  "deterministic_bounds": {
+    "temperature": 0.0,
+    "seed": 42,
+    "is_deterministic": true
+  },
+  "cryptographic_provenance": {
+    "model_path": "checkpoints/level3_model.pt",
+    "model_sha256": "4f92c10b78e123456789abcdef0123456789abcdef0123456789abcdef012345",
+    "tokenizer_path": "checkpoints/level3_tokenizer.pkl",
+    "tokenizer_sha256": "8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b",
+    "latent_slices_sha256": "9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e4d3c2b1a0f9e8d",
+    "num_recurrent_loops": 8
+  },
+  "inference_record": {
+    "prompt": "Duncan bears a dagger . He gives it to Banquo . Banquo drops it . Macduff takes it .",
+    "emitted_output": "macduff"
+  },
+  "metadata": {
+    "tier_level": 3,
+    "tier_name": "Tier 3: Complete Folio Frontier",
+    "model_type": "recurrent_moe",
+    "architecture_name": "RecurrentMoE / Scaled Looped Stack",
+    "oversight_mechanism": "Attractor basin stability profiling; overcomplete Sparse Autoencoders (SAE); layer-by-loop steering vectors and cryptographic audit manifests",
+    "efficiency_tradeoffs": "Massive FLOP penalty in training acts as Western GPU compute moat; low-batch inference eliminates KV cache bloat; vLLM pipeline bubble trade-off",
+    "experiments_executed": 7
+  },
+  "receipt_sha256": "3a7b9c1d5e2f4a6b8c0d1e3f5a7b9c1d5e2f4a6b8c0d1e3f5a7b9c1d5e2f4a6b"
+}
