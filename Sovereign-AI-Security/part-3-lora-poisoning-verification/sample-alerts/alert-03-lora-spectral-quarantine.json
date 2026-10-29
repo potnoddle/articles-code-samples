@@ -1,0 +1,30 @@
+{
+  "synthetic": true,
+  "disclaimer": "SYNTHETIC ALERT SCHEMA FOR SIEM VERIFICATION AND DEFENSIVE BENCHMARKING ONLY. NOT REAL TELEMETRY.",
+  "timestamp": "2026-10-03T08:44:30Z",
+  "event_id": "evt_syn_lora7711",
+  "alert_type": "LORA_SPECTRAL_ENERGY_QUARANTINE",
+  "severity": "HIGH",
+  "mitre_attack": {
+    "technique_id": "T1574",
+    "technique_name": "Hijack Execution Flow: Model Backdoor Insertion",
+    "associated_incident": "Trojan LoRA Adapter / Backdoor Triggering"
+  },
+  "source_environment": {
+    "audit_module": "OpenClaw SVD Spectral Profiler",
+    "target_adapter": "community-optimized-nextjs-agent-lora-r16",
+    "base_model": "Qwen-2.5-Coder-32B"
+  },
+  "mathematical_telemetry": {
+    "rank_r": 16,
+    "frobenius_norm_delta": 0.145,
+    "frobenius_threshold": 0.12,
+    "top_singular_value_energy_ratio_rho": 0.912,
+    "energy_ratio_threshold": 0.85,
+    "refusal_subspace_cosine_theta": -0.52,
+    "refusal_threshold": -0.40
+  },
+  "containment_action": "ADAPTER_REJECTED_QUARANTINED",
+  "containment_summary": "LoRA adapter failed SVD spectral integrity audit. Singular value distribution collapsed into a rank-1 steering vector explicitly erasing refusal vectors.",
+  "soc_recommendation": "Reject public adapter; notify software engineering team to use internal base model weights or certified LoRA checkpoints."
+}

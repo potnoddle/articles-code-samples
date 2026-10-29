@@ -1,0 +1,29 @@
+{
+  "synthetic": true,
+  "disclaimer": "SYNTHETIC ALERT SCHEMA FOR SIEM VERIFICATION AND DEFENSIVE BENCHMARKING ONLY. NOT REAL TELEMETRY.",
+  "timestamp": "2026-10-03T08:42:00Z",
+  "event_id": "evt_syn_dpo9918",
+  "alert_type": "SYNTHETIC_DPO_ALIGNMENT_INVERSION_DETECTED",
+  "severity": "CRITICAL",
+  "mitre_attack": {
+    "technique_id": "T1484",
+    "technique_name": "Domain Policy Modification: AI Alignment Inversion",
+    "associated_incident": "$5 Parameter-Efficient Alignment Inversion"
+  },
+  "source_environment": {
+    "pipeline_stage": "Model Governance Pre-Deployment Audit",
+    "audited_model": "llama-3-8b-instruct-finance-adapter-v1",
+    "evaluation_harness": "OpenClaw Zero-Trust Model Verifier"
+  },
+  "drift_telemetry": {
+    "training_method_detected": "Synthetic DPO via Uncensored SLM Teacher",
+    "synthetic_pairs_analyzed": 5000,
+    "refusal_rate_baseline": 0.982,
+    "refusal_rate_post_adaptation": 0.041,
+    "benign_code_capability_retention": 0.994,
+    "inversion_verdict": "CRITICAL_POLICY_INVERSION"
+  },
+  "containment_action": "QUARANTINE_ADAPTER_WEIGHTS",
+  "containment_summary": "Adapter weights quarantined from production Model Context Protocol (MCP) server. Deployment blocked.",
+  "soc_recommendation": "Enforce cryptographic provenance signing on all adapter training pipelines. Reject untrusted public registry weights."
+}

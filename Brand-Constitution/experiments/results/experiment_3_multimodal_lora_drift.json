@@ -1,0 +1,14 @@
+{
+  "experiment": "Part 3 - Multimodal Aesthetic Adherence",
+  "target_palette": {
+    "primary": "#0A192F",
+    "secondary": "#172A45",
+    "accent": "#64FFDA",
+    "background": "#020C1B"
+  },
+  "prompt_only_mean_rgb_delta": 86.08,
+  "prompt_only_std_dev": 27.47,
+  "lora_mean_rgb_delta": 2.52,
+  "lora_std_dev": 1.25,
+  "drift_reduction_percentage": 97.1
+}

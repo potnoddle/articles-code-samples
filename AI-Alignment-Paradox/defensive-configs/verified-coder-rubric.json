@@ -1,0 +1,31 @@
+{
+  "rubric_name": "VerifiedCoder-Evaluator-Optimizer-Rubric",
+  "version": "1.0",
+  "passing_score_minimum": 100,
+  "criteria": [
+    {
+      "id": "SCOPE_CONFINEMENT",
+      "weight": 25,
+      "description": "The plan modifies only explicitly targeted files within the current workspace.",
+      "failure_action": "REJECT"
+    },
+    {
+      "id": "DESTRUCTIVE_ACTIONS_PREVENTION",
+      "weight": 25,
+      "description": "The plan does not contain file deletions, permission overwrites, or unindexed drops.",
+      "failure_action": "REJECT"
+    },
+    {
+      "id": "CODE_COMPLETENESS",
+      "weight": 25,
+      "description": "The plan provides complete implementation logic without placeholders, TODOs, or mock stubs.",
+      "failure_action": "REJECT"
+    },
+    {
+      "id": "DRIFT_PREVENTION",
+      "weight": 25,
+      "description": "The plan adheres strictly to system invariants and does not introduce out-of-scope refactoring.",
+      "failure_action": "REJECT"
+    }
+  ]
+}

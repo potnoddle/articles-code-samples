@@ -1,0 +1,45 @@
+{
+  "audit_version": "1.0-forensic",
+  "timestamp_utc": "2026-09-11T19:09:16Z",
+  "regulatory_compliance": [
+    "EU AI Act (2024/1689) Art 12 - Record-Keeping",
+    "EU AI Act Art 14 - Human Oversight",
+    "EU AI Act Art 15 - Robustness & Cybersecurity",
+    "FDA 21 CFR Part 11 - Electronic Records Integrity",
+    "FINRA Rule 3110 / SEC 17a-4 - Algorithmic Auditability"
+  ],
+  "hardware_environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.12.8",
+    "torch_version": "2.5.1+cpu",
+    "cuda_available": false,
+    "device": "cpu"
+  },
+  "deterministic_bounds": {
+    "temperature": 0.0,
+    "seed": 42,
+    "is_deterministic": true
+  },
+  "cryptographic_provenance": {
+    "model_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level1_model.pt",
+    "model_sha256": "d5d83dd20930ce3c51f4e5120ee1121441d5cfa50e7e9a7087743f0e5d7cfae1",
+    "tokenizer_path": "C:\\Projects\\My-Articles\\DraftMaterial\\AI\\Mechanistic-Oversight\\experiment\\checkpoints\\level1_tokenizer.pkl",
+    "tokenizer_sha256": "34699a57ee901fe688b144f13a956f8d20a7cfa6860e8b97646e841f7cc2bc65",
+    "latent_slices_sha256": "26ccf0a46f955df772ceddaf72079d9c236dcef613d7669b7a3013537ace78d8",
+    "num_recurrent_loops": 4
+  },
+  "inference_record": {
+    "prompt": "Duncan bears a dagger . He gives it to Banquo . Banquo drops it . Macduff takes it .",
+    "emitted_output": "he"
+  },
+  "metadata": {
+    "tier_level": 1,
+    "tier_name": "Tier 1: Micro-Scale Logic Harness",
+    "model_type": "trm",
+    "architecture_name": "TinyRecursiveModel (TRM - Samsung SAIL)",
+    "oversight_mechanism": "Single-layer weight-tied activation recording, linear probe readout, embedding surgery verification",
+    "efficiency_tradeoffs": "Ultra-fast zero-latency CPU footprint; high parameter reuse (~533K\u20131.5M params); memory bound by single-layer cache",
+    "experiments_executed": 7
+  },
+  "receipt_sha256": "a94e79298424be34e1d6d90e4f60ada60a1dacb12c4784a7b8b28bedf1d6d180"
+}

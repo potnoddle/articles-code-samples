@@ -1,0 +1,10 @@
+# Suricata / Snort Network IDS Rules: Detection of High-Entropy DNS Tunneling
+# Targeting recursive port 53 data exfiltration and C2 beaconing (OpenAI Sept 2026 Sandbox Escape Vector)
+
+alert dns any any -> any 53 (msg:"AI-DEFENSE: High-Entropy Base32/Base64 Subdomain Query (Possible LLM Data Exfiltration)"; \
+    content:"."; \
+    pcre:"/^[a-z0-9\-_]{24,}\./i"; \
+    threshold: type both, track by_src, count 20, seconds 10; \
+    classtype:bad-unknown; \
+    sid:1000901; \
+    rev:1;)

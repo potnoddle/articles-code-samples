@@ -1,0 +1,95 @@
+{
+  "unstructured_guidelines": "Our brand voice is confident, visionary, and forward-looking. We are building game-changer solutions for today's fast-paced world. Always strive to delve into the tapestry of digital innovation and bring cutting-edge experiences to our enterprise customers.",
+  "machine_readable_constitution": {
+    "version": "1.0.0",
+    "parent": {
+      "formality": 0.85,
+      "empiricism": 0.90,
+      "confidence": 0.85,
+      "hype": 0.0,
+      "banned_terms": [
+        "delve",
+        "tapestry",
+        "game-changer",
+        "in today's fast-paced world",
+        "testament to",
+        "revolutionary",
+        "cutting-edge"
+      ],
+      "mandatory_assertions": [
+        "require_straight_quotes",
+        "require_source_attribution_for_stats"
+      ]
+    },
+    "sub_brands": {
+      "sub_brand_a_cloud": {
+        "inheritance": "endorsed",
+        "formality": 0.85,
+        "allow_contractions": false,
+        "allowed_jargon": ["multi-tenant", "SLA", "SLO", "zero-trust"]
+      },
+      "sub_brand_b_dev": {
+        "inheritance": "house_of_brands",
+        "formality": 0.40,
+        "allow_contractions": true,
+        "code_first": true
+      }
+    }
+  },
+  "benchmark_corpus": [
+    {
+      "id": "asset_01",
+      "channel": "press_release",
+      "target_brand": "parent",
+      "content": "Our revolutionary new cloud platform is a game-changer in today's fast-paced world. We delve deep into customer requirements to build cutting-edge solutions."
+    },
+    {
+      "id": "asset_02",
+      "channel": "blog_post",
+      "target_brand": "sub_brand_a_cloud",
+      "content": "Enterprise deployments improved performance by 74% according to our internal 2026 Q3 client benchmark. The multi-tenant architecture meets standard SLA commitments."
+    },
+    {
+      "id": "asset_03",
+      "channel": "developer_docs",
+      "target_brand": "sub_brand_b_dev",
+      "content": "You can't afford broken builds. It's super simple: run `validate_brand.py` before opening your pull request to catch syntax errors."
+    },
+    {
+      "id": "asset_04",
+      "channel": "social_linkedin",
+      "target_brand": "parent",
+      "content": "Recent research reveals 92% of marketing teams face brand dilution. We believe this is a testament to the need for automated governance."
+    },
+    {
+      "id": "asset_05",
+      "channel": "marketing_landing_page",
+      "target_brand": "sub_brand_a_cloud",
+      "content": "It's time to transform your business with our cutting-edge AI governance suite. We delve into corporate risk and automate testing."
+    }
+  ],
+  "visual_brand_cards": {
+    "enterprise_cloud": {
+      "palette": {
+        "primary": "#0A192F",
+        "secondary": "#172A45",
+        "accent": "#64FFDA",
+        "background": "#020C1B"
+      },
+      "tolerance_delta_e": 8.0,
+      "negative_space_ratio": 0.45,
+      "prohibited_visuals": ["generic_robot_handshake", "glowing_circuit_overlay"]
+    },
+    "developer_tools": {
+      "palette": {
+        "primary": "#20232A",
+        "secondary": "#282C34",
+        "accent": "#61DAFB",
+        "background": "#1E1E1E"
+      },
+      "tolerance_delta_e": 10.0,
+      "negative_space_ratio": 0.35,
+      "prohibited_visuals": ["stock_suited_handshake", "pie_chart_stock_render"]
+    }
+  }
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astra Mechanistic Oversight: Interactive Logit Lens Grid</title>
+  <style>
+    :root {
+      --bg: #0a0a14;
+      --card-bg: rgba(20, 20, 38, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+      --cyan: #00f5ff;
+      --purple: #a855f7;
+      --pink: #ff4d6d;
+      --green: #50fa7b;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      padding: 24px;
+      min-height: 100vh;
+    }
+    .header {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00f5ff, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+    .matrix-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+    }
+    th, td {
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--cyan);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .loop-header {
+      color: var(--purple);
+      font-weight: 700;
+      background: rgba(168, 85, 247, 0.08);
+      text-align: left;
+      padding-left: 12px;
+      white-space: nowrap;
+    }
+    .cell {
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .cell:hover {
+      transform: scale(1.05);
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.5);
+      border-color: var(--cyan);
+    }
+    .cell-word {
+      font-weight: 700;
+      display: block;
+    }
+    .cell-prob {
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #141426;
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+      z-index: 100;
+      min-width: 260px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Interactive Logit Lens Matrix</h1>
+  <p>Unembedding intermediate recurrent hidden states directly to vocabulary space across time and depth</p>
+</div>
+
+<div class="matrix-wrapper">
+  <table id="lens-table">
+    <thead>
+      <tr id="token-row">
+        <th style="width: 100px;">Loop / Pos</th>
+      </tr>
+    </thead>
+    <tbody id="lens-body"></tbody>
+  </table>
+</div>
+
+<div class="modal" id="info-modal">
+  <h4 id="modal-title" style="color: var(--cyan); margin-bottom: 8px; font-size: 13px;"></h4>
+  <div id="modal-top3"></div>
+</div>
+
+<script>
+  const payload = {"tokens": ["duncan", "bears", "a", "dagger", ".", "he", "gives", "it", "to", "banquo", ".", "banquo", "drops", "it", ".", "macduff", "takes", "it", "."], "loops": ["Loop 1", "Loop 2", "Loop 3", "Loop 4"], "grid": [[{"word": "speak", "prob": 73.6, "top3": [{"word": "speak", "prob": 73.6}, {"word": "before", "prob": 24.8}, {"word": "medicine", "prob": 1.4}]}, {"word": "honour", "prob": 100.0, "top3": [{"word": "honour", "prob": 100.0}, {"word": "a", "prob": 0.0}, {"word": "the", "prob": 0.0}]}, {"word": "doctor", "prob": 96.2, "top3": [{"word": "doctor", "prob": 96.2}, {"word": "medicine", "prob": 2.6}, {"word": "honour", "prob": 1.1}]}, {"word": "places", "prob": 98.9, "top3": [{"word": "places", "prob": 98.9}, {"word": "verse", "prob": 0.6}, {"word": "is", "prob": 0.3}]}, {"word": "uses", "prob": 97.6, "top3": [{"word": "uses", "prob": 97.6}, {"word": "macduff", "prob": 2.1}, {"word": "wicked", "prob": 0.2}]}, {"word": "<EOS>", "prob": 51.7, "top3": [{"word": "<EOS>", "prob": 51.7}, {"word": "medicine", "prob": 37.4}, {"word": "too", "prob": 8.8}]}, {"word": "there", "prob": 100.0, "top3": [{"word": "there", "prob": 100.0}, {"word": "it", "prob": 0.0}, {"word": "king", "prob": 0.0}]}, {"word": "hand", "prob": 62.5, "top3": [{"word": "hand", "prob": 62.5}, {"word": "so", "prob": 31.4}, {"word": "wood", "prob": 2.6}]}, {"word": "lends", "prob": 77.5, "top3": [{"word": "lends", "prob": 77.5}, {"word": "peace", "prob": 17.0}, {"word": "places", "prob": 4.2}]}, {"word": "a", "prob": 98.6, "top3": [{"word": "a", "prob": 98.6}, {"word": "or", "prob": 1.0}, {"word": "has", "prob": 0.3}]}, {"word": "wicked", "prob": 99.1, "top3": [{"word": "wicked", "prob": 99.1}, {"word": "macduff", "prob": 0.5}, {"word": "bears", "prob": 0.3}]}, {"word": "has", "prob": 93.4, "top3": [{"word": "has", "prob": 93.4}, {"word": "or", "prob": 6.4}, {"word": "uses", "prob": 0.2}]}, {"word": "the", "prob": 99.9, "top3": [{"word": "the", "prob": 99.9}, {"word": "blade", "prob": 0.0}, {"word": "of", "prob": 0.0}]}, {"word": "so", "prob": 99.2, "top3": [{"word": "so", "prob": 99.2}, {"word": "works", "prob": 0.4}, {"word": "create", "prob": 0.2}]}, {"word": "uses", "prob": 66.3, "top3": [{"word": "uses", "prob": 66.3}, {"word": "honour", "prob": 26.2}, {"word": "macduff", "prob": 2.8}]}, {"word": "finds", "prob": 96.1, "top3": [{"word": "finds", "prob": 96.1}, {"word": "designs", "prob": 3.8}, {"word": "fire", "prob": 0.0}]}, {"word": "loses", "prob": 76.8, "top3": [{"word": "loses", "prob": 76.8}, {"word": "wicked", "prob": 11.4}, {"word": ".", "prob": 5.1}]}, {"word": "so", "prob": 99.1, "top3": [{"word": "so", "prob": 99.1}, {"word": "i", "prob": 0.8}, {"word": "sheathes", "prob": 0.0}]}, {"word": "the", "prob": 99.0, "top3": [{"word": "the", "prob": 99.0}, {"word": "<EOS>", "prob": 0.9}, {"word": "bears", "prob": 0.0}]}], [{"word": "before", "prob": 51.8, "top3": [{"word": "before", "prob": 51.8}, {"word": "of", "prob": 35.4}, {"word": "used", "prob": 8.1}]}, {"word": "takes", "prob": 47.3, "top3": [{"word": "takes", "prob": 47.3}, {"word": "a", "prob": 23.9}, {"word": "the", "prob": 15.8}]}, {"word": "dagger", "prob": 100.0, "top3": [{"word": "dagger", "prob": 100.0}, {"word": "words", "prob": 0.0}, {"word": "doctor", "prob": 0.0}]}, {"word": ".", "prob": 80.6, "top3": [{"word": ".", "prob": 80.6}, {"word": "which", "prob": 17.6}, {"word": "is", "prob": 1.7}]}, {"word": "<EOS>", "prob": 99.7, "top3": [{"word": "<EOS>", "prob": 99.7}, {"word": "the", "prob": 0.3}, {"word": "dagger", "prob": 0.0}]}, {"word": "dagger", "prob": 81.8, "top3": [{"word": "dagger", "prob": 81.8}, {"word": "undone", "prob": 8.8}, {"word": "makes", "prob": 8.8}]}, {"word": "it", "prob": 54.9, "top3": [{"word": "it", "prob": 54.9}, {"word": "?", "prob": 23.5}, {"word": "there", "prob": 16.6}]}, {"word": ".", "prob": 95.7, "top3": [{"word": ".", "prob": 95.7}, {"word": "any", "prob": 1.4}, {"word": "tools", "prob": 1.1}]}, {"word": "duncan", "prob": 91.8, "top3": [{"word": "duncan", "prob": 91.8}, {"word": "banquo", "prob": 4.0}, {"word": "patient", "prob": 1.3}]}, {"word": "and", "prob": 38.5, "top3": [{"word": "and", "prob": 38.5}, {"word": "toil", "prob": 20.2}, {"word": "fog", "prob": 19.7}]}, {"word": "<EOS>", "prob": 100.0, "top3": [{"word": "<EOS>", "prob": 100.0}, {"word": "the", "prob": 0.0}, {"word": "makes", "prob": 0.0}]}, {"word": "has", "prob": 97.0, "top3": [{"word": "has", "prob": 97.0}, {"word": "fog", "prob": 2.7}, {"word": "and", "prob": 0.3}]}, {"word": "crown", "prob": 86.8, "top3": [{"word": "crown", "prob": 86.8}, {"word": "it", "prob": 10.9}, {"word": "the", "prob": 0.8}]}, {"word": "dagger", "prob": 48.8, "top3": [{"word": "dagger", "prob": 48.8}, {"word": ".", "prob": 29.8}, {"word": "tools", "prob": 10.0}]}, {"word": "<EOS>", "prob": 99.9, "top3": [{"word": "<EOS>", "prob": 99.9}, {"word": "the", "prob": 0.0}, {"word": "he", "prob": 0.0}]}, {"word": "takes", "prob": 99.6, "top3": [{"word": "takes", "prob": 99.6}, {"word": "has", "prob": 0.2}, {"word": "of", "prob": 0.1}]}, {"word": "it", "prob": 89.9, "top3": [{"word": "it", "prob": 89.9}, {"word": "protest", "prob": 4.3}, {"word": "a", "prob": 1.2}]}, {"word": ".", "prob": 68.6, "top3": [{"word": ".", "prob": 68.6}, {"word": "dagger", "prob": 8.8}, {"word": "tools", "prob": 4.7}]}, {"word": "<EOS>", "prob": 98.4, "top3": [{"word": "<EOS>", "prob": 98.4}, {"word": "the", "prob": 1.6}, {"word": "macduff", "prob": 0.0}]}], [{"word": "sword", "prob": 33.5, "top3": [{"word": "sword", "prob": 33.5}, {"word": "loses", "prob": 12.5}, {"word": "designs", "prob": 10.7}]}, {"word": "a", "prob": 85.6, "top3": [{"word": "a", "prob": 85.6}, {"word": "the", "prob": 7.2}, {"word": ".", "prob": 2.5}]}, {"word": "dagger", "prob": 55.3, "top3": [{"word": "dagger", "prob": 55.3}, {"word": "surgeon", "prob": 42.9}, {"word": "physician", "prob": 1.0}]}, {"word": ".", "prob": 99.9, "top3": [{"word": ".", "prob": 99.9}, {"word": "which", "prob": 0.1}, {"word": "or", "prob": 0.0}]}, {"word": "<EOS>", "prob": 72.2, "top3": [{"word": "<EOS>", "prob": 72.2}, {"word": "macduff", "prob": 25.4}, {"word": "the", "prob": 1.2}]}, {"word": "surgeon", "prob": 85.8, "top3": [{"word": "surgeon", "prob": 85.8}, {"word": "lends", "prob": 11.0}, {"word": "gives", "prob": 0.8}]}, {"word": "it", "prob": 99.9, "top3": [{"word": "it", "prob": 99.9}, {"word": "surgeon", "prob": 0.0}, {"word": "peace", "prob": 0.0}]}, {"word": ".", "prob": 92.9, "top3": [{"word": ".", "prob": 92.9}, {"word": "to", "prob": 5.7}, {"word": "dagger", "prob": 0.6}]}, {"word": "heal", "prob": 76.3, "top3": [{"word": "heal", "prob": 76.3}, {"word": "cure", "prob": 8.0}, {"word": "duncan", "prob": 6.6}]}, {"word": ".", "prob": 45.0, "top3": [{"word": ".", "prob": 45.0}, {"word": "drops", "prob": 30.3}, {"word": "works", "prob": 10.0}]}, {"word": "<EOS>", "prob": 93.5, "top3": [{"word": "<EOS>", "prob": 93.5}, {"word": "macduff", "prob": 4.1}, {"word": "the", "prob": 1.9}]}, {"word": "works", "prob": 55.9, "top3": [{"word": "works", "prob": 55.9}, {"word": "has", "prob": 30.3}, {"word": "of", "prob": 4.6}]}, {"word": "it", "prob": 69.1, "top3": [{"word": "it", "prob": 69.1}, {"word": "the", "prob": 20.5}, {"word": "surgeon", "prob": 5.0}]}, {"word": ".", "prob": 94.0, "top3": [{"word": ".", "prob": 94.0}, {"word": "to", "prob": 1.8}, {"word": "it", "prob": 0.9}]}, {"word": "<EOS>", "prob": 74.0, "top3": [{"word": "<EOS>", "prob": 74.0}, {"word": "macduff", "prob": 22.5}, {"word": "the", "prob": 1.9}]}, {"word": "takes", "prob": 85.7, "top3": [{"word": "takes", "prob": 85.7}, {"word": "finds", "prob": 8.0}, {"word": "makes", "prob": 2.8}]}, {"word": "it", "prob": 98.2, "top3": [{"word": "it", "prob": 98.2}, {"word": "surgeon", "prob": 1.6}, {"word": "head", "prob": 0.1}]}, {"word": ".", "prob": 93.8, "top3": [{"word": ".", "prob": 93.8}, {"word": "to", "prob": 3.0}, {"word": "it", "prob": 1.4}]}, {"word": "<EOS>", "prob": 75.7, "top3": [{"word": "<EOS>", "prob": 75.7}, {"word": "macduff", "prob": 11.9}, {"word": "the", "prob": 10.9}]}], [{"word": ".", "prob": 45.3, "top3": [{"word": ".", "prob": 45.3}, {"word": "loses", "prob": 44.6}, {"word": "banquo", "prob": 2.6}]}, {"word": "a", "prob": 86.0, "top3": [{"word": "a", "prob": 86.0}, {"word": "banquo", "prob": 6.3}, {"word": ".", "prob": 4.8}]}, {"word": "dagger", "prob": 97.1, "top3": [{"word": "dagger", "prob": 97.1}, {"word": "surgeon", "prob": 1.1}, {"word": "doctor", "prob": 0.8}]}, {"word": ".", "prob": 100.0, "top3": [{"word": ".", "prob": 100.0}, {"word": "to", "prob": 0.0}, {"word": "is", "prob": 0.0}]}, {"word": "macduff", "prob": 43.0, "top3": [{"word": "macduff", "prob": 43.0}, {"word": "he", "prob": 20.5}, {"word": "<EOS>", "prob": 18.1}]}, {"word": "lends", "prob": 77.0, "top3": [{"word": "lends", "prob": 77.0}, {"word": "gives", "prob": 20.7}, {"word": "passes", "prob": 0.8}]}, {"word": "it", "prob": 100.0, "top3": [{"word": "it", "prob": 100.0}, {"word": "he", "prob": 0.0}, {"word": "?", "prob": 0.0}]}, {"word": "to", "prob": 61.5, "top3": [{"word": "to", "prob": 61.5}, {"word": ".", "prob": 38.0}, {"word": "banquo", "prob": 0.2}]}, {"word": "banquo", "prob": 77.0, "top3": [{"word": "banquo", "prob": 77.0}, {"word": "duncan", "prob": 19.6}, {"word": "heal", "prob": 1.1}]}, {"word": ".", "prob": 51.1, "top3": [{"word": ".", "prob": 51.1}, {"word": "drops", "prob": 42.4}, {"word": "carries", "prob": 4.7}]}, {"word": "macduff", "prob": 36.6, "top3": [{"word": "macduff", "prob": 36.6}, {"word": "he", "prob": 24.1}, {"word": "<EOS>", "prob": 21.8}]}, {"word": "drops", "prob": 71.6, "top3": [{"word": "drops", "prob": 71.6}, {"word": ".", "prob": 24.5}, {"word": "carries", "prob": 1.4}]}, {"word": "it", "prob": 99.7, "top3": [{"word": "it", "prob": 99.7}, {"word": "macduff", "prob": 0.1}, {"word": "crown", "prob": 0.1}]}, {"word": "to", "prob": 54.6, "top3": [{"word": "to", "prob": 54.6}, {"word": ".", "prob": 44.6}, {"word": "upon", "prob": 0.2}]}, {"word": "macduff", "prob": 38.3, "top3": [{"word": "macduff", "prob": 38.3}, {"word": "he", "prob": 28.3}, {"word": "<EOS>", "prob": 17.9}]}, {"word": "takes", "prob": 100.0, "top3": [{"word": "takes", "prob": 100.0}, {"word": "finds", "prob": 0.0}, {"word": "any", "prob": 0.0}]}, {"word": "it", "prob": 100.0, "top3": [{"word": "it", "prob": 100.0}, {"word": ".", "prob": 0.0}, {"word": "protest", "prob": 0.0}]}, {"word": "to", "prob": 62.8, "top3": [{"word": "to", "prob": 62.8}, {"word": ".", "prob": 36.7}, {"word": "upon", "prob": 0.2}]}, {"word": "he", "prob": 32.1, "top3": [{"word": "he", "prob": 32.1}, {"word": "macduff", "prob": 31.6}, {"word": "<EOS>", "prob": 24.5}]}]]};
+
+  const tokenRow = document.getElementById('token-row');
+  payload.tokens.forEach((tok, i) => {
+    const th = document.createElement('th');
+    th.innerHTML = `<span style="color: var(--text-dim); font-size: 10px;">${i}</span><br>${tok}`;
+    tokenRow.appendChild(th);
+  });
+
+  const tbody = document.getElementById('lens-body');
+  payload.loops.forEach((loopName, lIdx) => {
+    const tr = document.createElement('tr');
+    const loopTh = document.createElement('td');
+    loopTh.className = 'loop-header';
+    loopTh.innerText = loopName;
+    tr.appendChild(loopTh);
+
+    payload.grid[lIdx].forEach((cell, pos) => {
+      const td = document.createElement('td');
+      td.className = 'cell';
+      
+      const alpha = Math.min(0.85, Math.max(0.12, cell.prob / 100));
+      td.style.backgroundColor = `rgba(0, 245, 255, ${alpha})`;
+      
+      td.innerHTML = `
+        <span class="cell-word">${cell.word}</span>
+        <span class="cell-prob">${cell.prob}%</span>
+      `;
+      td.onmouseenter = () => showModal(lIdx, pos, cell);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  const modal = document.getElementById('info-modal');
+  function showModal(loopIdx, pos, cell) {
+    modal.style.display = 'block';
+    document.getElementById('modal-title').innerText = `${payload.loops[loopIdx]} @ Pos ${pos} ("${payload.tokens[pos]}")`;
+    const top3Html = cell.top3.map((item, idx) => `
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 4px;">
+        <span>#${idx+1} <strong>${item.word}</strong></span>
+        <span style="color: var(--cyan);">${item.prob}%</span>
+      </div>
+    `).join('');
+    document.getElementById('modal-top3').innerHTML = top3Html;
+  }
+  document.body.onclick = () => modal.style.display = 'none';
+</script>
+
+</body>
+</html>
